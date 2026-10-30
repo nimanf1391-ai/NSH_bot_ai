@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NSH.bot</title>
+<meta name="theme-color" content="#101a33">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="NSH.bot">
+<link rel="manifest" href='data:application/manifest+json,{"name":"NSH.bot","short_name":"NSH.bot","display":"standalone","dir":"rtl","lang":"fa","background_color":"%23101a33","theme_color":"%23101a33"}'>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e6ebf3;--card:#fff;--ink:#101a33;--mut:#5d6b88;--line:#d0d8e6;--bot:#fff;--me:#101a33;--meink:#fff;--pr:#c98100;--prbg:#fff3d6;--co:#5b4ccf;--cobg:#ece9ff;--acc:#f2a900;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a0f1f;--card:#131a31;--ink:#e9eefb;--mut:#92a1c2;--line:#26335a;--bot:#172040;--me:#f2a900;--meink:#101a33;--pr:#ffc43d;--prbg:#3a2e0c;--co:#a99cff;--cobg:#241f52}}
+:root[data-theme="dark"]{--bg:#0a0f1f;--card:#131a31;--ink:#e9eefb;--mut:#92a1c2;--line:#26335a;--bot:#172040;--me:#f2a900;--meink:#101a33;--pr:#ffc43d;--prbg:#3a2e0c;--co:#a99cff;--cobg:#241f52}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Vazirmatn,Tahoma,sans-serif;display:flex;justify-content:center}
+.app{width:100%;max-width:600px;height:100%;display:flex;flex-direction:column;background:var(--bg)}
+header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.logo{width:42px;height:42px;border-radius:12px;background:var(--ink);color:var(--acc);display:grid;place-items:center;font-weight:800;font-size:14px;direction:ltr}
+h1{font-size:17px;margin:0;direction:ltr;font-weight:800;text-align:right}
+header small{display:block;color:var(--mut);font-size:12px}
+.st{margin-inline-start:auto;display:flex;gap:14px;font-size:11px;color:var(--mut);text-align:center}
+.st b{display:block;font-size:17px;color:var(--ink)}
+.ib{border:1px solid var(--line);background:none;color:var(--ink);width:36px;height:36px;border-radius:10px;cursor:pointer;font-size:16px}
+#log{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.m{max-width:92%;padding:10px 13px;border-radius:16px;line-height:1.9;font-size:14.5px;word-break:break-word}
+.bot{background:var(--bot);border:1px solid var(--line);align-self:flex-start;border-top-right-radius:4px;width:92%}
+.bot.t{width:auto}
+.me{background:var(--me);color:var(--meink);align-self:flex-end;border-top-left-radius:4px;direction:auto;font-weight:600}
+.num{direction:ltr;unicode-bidi:isolate;display:inline-block;max-width:100%;overflow-wrap:anywhere}
+.vd{border-radius:14px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.vd.p{background:var(--prbg);color:var(--pr)}.vd.c{background:var(--cobg);color:var(--co)}.vd.z{background:var(--bg);color:var(--mut)}
+.vn{font-size:19px;font-weight:800;overflow-wrap:anywhere;min-width:0}
+.vt{font-weight:800;font-size:15px;white-space:nowrap}
+.fx{display:grid;grid-template-columns:1fr;gap:2px}
+.fx div{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.fx div:last-child{border:0}.fx span{color:var(--mut);flex:none}.fx b{font-weight:600;text-align:left}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 6px}
+.tag{background:var(--cobg);color:var(--co);border-radius:8px;padding:2px 9px;font-weight:700;font-size:14px}
+.strip{display:flex;gap:4px;direction:ltr;margin:8px 0 2px}
+.strip i{flex:1;min-width:0;font-style:normal;text-align:center;font-size:10.5px;padding:5px 0;border-radius:7px;border:1px solid var(--line);color:var(--mut);overflow:hidden}
+.strip i.p{background:var(--pr);color:var(--card);border-color:var(--pr);font-weight:800}
+.strip i.on{outline:2px solid var(--ink);outline-offset:1px}
+.cap{font-size:11.5px;color:var(--mut)}
+.ok{color:var(--pr);font-weight:800}.bad{color:var(--co);font-weight:800}
+.dots span{display:inline-block;width:6px;height:6px;margin:0 2px;border-radius:50%;background:var(--mut);animation:b 1s infinite}
+.dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
+@keyframes b{50%{transform:translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){.dots span{animation:none}#log{scroll-behavior:auto}}
+#chips{display:flex;gap:8px;overflow-x:auto;padding:4px 14px 8px;scrollbar-width:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 13px;font:inherit;font-size:13px;cursor:pointer}
+.bar{display:flex;gap:8px;padding:10px 14px 14px;background:var(--card);border-top:1px solid var(--line)}
+.bar[hidden]{display:none}
+input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:11px 13px;font:inherit;font-size:16px;direction:ltr;text-align:left}
+.send,.big{border:0;border-radius:12px;font:inherit;font-weight:800;cursor:pointer;padding:11px 18px}
+.send{background:var(--acc);color:#101a33}
+.big{flex:1;font-size:15px}.big.p{background:var(--prbg);color:var(--pr)}.big.c{background:var(--cobg);color:var(--co)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.app{background:transparent;position:relative;z-index:1}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+header{background:linear-gradient(135deg,var(--card),var(--bg));box-shadow:0 6px 24px -14px rgba(16,26,51,.5)}
+.logo{background:linear-gradient(145deg,#172554,#0b1024);box-shadow:0 0 0 2px var(--acc),0 0 22px rgba(242,169,0,.42);position:relative;overflow:hidden}
+.logo svg{width:34px;height:34px;display:block}
+.geoInfo{padding:10px 13px;line-height:2;max-height:115px}
+.geoInfo .infoTitle{display:block;font-weight:800;font-size:14px;color:var(--pr);margin-bottom:4px}
+.geoInfo .infoRow{display:inline-block;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:2px 8px;margin:2px 3px}
+.geoInfo .infoRow b{font-weight:800;color:var(--ink)}
+.geoInfo .infoGroup{display:flex;flex-wrap:wrap;gap:4px}
+.geoHead strong{font-family:Vazirmatn,'Noto Nastaliq Urdu',sans-serif}
+
+.bot{box-shadow:0 8px 24px -16px rgba(16,26,51,.6)}
+.vd{position:relative;overflow:hidden;animation:pop .45s cubic-bezier(.2,1.3,.4,1)}
+.vd.p{box-shadow:inset 0 0 0 1.5px var(--pr),0 8px 26px -10px var(--pr)}
+.vd.c{box-shadow:inset 0 0 0 1.5px var(--co),0 8px 26px -10px var(--co)}
+@keyframes pop{from{transform:scale(.94);opacity:0}}
+.ul{display:block;width:100%;max-width:300px;margin:10px auto 2px;border-radius:12px;background:var(--bg);padding:6px}
+.ul .p{fill:var(--pr)}.ul .c{fill:var(--line)}.ul .on{fill:var(--ink)}
+.tm{height:5px;background:var(--line);border-radius:5px;overflow:hidden;margin:0 14px 8px}
+.tm i{display:block;height:100%;background:linear-gradient(90deg,var(--co),var(--acc));transform-origin:right;animation:tm 20s linear forwards}
+@keyframes tm{to{transform:scaleX(0)}}
+.wm{align-self:flex-start;direction:ltr;display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.6px;color:var(--mut);padding:0 14px 6px;width:100%;background:var(--card)}
+.wm u{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)}
+@media (prefers-reduced-motion:reduce){.vd{animation:none}.tm i{animation-duration:20s}}
+
+.cb{border:0;background:var(--acc);color:#101a33;border-radius:10px;height:36px;padding:0 12px;font:inherit;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap}
+@media (max-width:430px){header small{display:none}.st{gap:8px}header{gap:8px;padding:10px}}
+#sp{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:radial-gradient(circle at 50% 38%,#2a4080,#101a33 70%);color:#fff;transition:opacity .6s,visibility .6s;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+#sp.out{opacity:0;visibility:hidden}
+.spi{display:flex;flex-direction:column;align-items:center;gap:20px;animation:pop .7s cubic-bezier(.2,1.3,.4,1)}
+.spl{width:86px;height:86px;border-radius:24px;background:#101a33;color:#f2a900;display:grid;place-items:center;font-weight:800;font-size:26px;direction:ltr;box-shadow:0 0 0 3px #f2a900,0 0 40px rgba(242,169,0,.55)}
+#sp h2{margin:0;font-size:38px;font-weight:800;letter-spacing:1px;direction:ltr}
+#sb{border:0;border-radius:12px;background:#f2a900;color:#101a33;font:inherit;font-weight:800;font-size:16px;padding:11px 36px;cursor:pointer}
+.spt{width:120px;height:4px;border-radius:4px;background:rgba(255,255,255,.2);overflow:hidden}
+.spt i{display:block;height:100%;background:#f2a900;transform-origin:right;animation:tm 3.5s linear forwards}
+.sv{display:grid;direction:ltr;gap:3px;margin:8px 0}
+.sv i{font-style:normal;text-align:center;font-size:11px;padding:6px 0;border-radius:6px;border:1px solid var(--line);color:var(--ink);min-width:0;transition:background .35s,color .35s}
+.sv i.one{background:var(--bg);color:var(--mut)}
+.sv i.x{background:var(--c);color:#fff;border-color:var(--c);text-decoration:line-through}
+.sv i.pr{background:var(--pr);color:var(--card);border-color:var(--pr);font-weight:800}
+.lg{display:flex;flex-wrap:wrap;gap:6px}
+.lg span{background:var(--c);color:#fff;border-radius:8px;padding:1px 9px;font-size:12px;font-weight:700}
+.orb{position:relative;width:150px;height:150px;display:grid;place-items:center}
+.orb>i{position:absolute;inset:0;border-radius:50%;border:2px dashed rgba(242,169,0,.55);animation:spin 8s linear infinite}
+.orb>i:nth-child(2){inset:16px;animation-duration:5s;animation-direction:reverse;border-color:rgba(255,255,255,.35)}
+.orb>i:nth-child(3){inset:-16px;animation-duration:13s;border-style:dotted;border-color:rgba(242,169,0,.35)}
+@keyframes spin{to{transform:rotate(360deg)}}
+#sh span{display:inline-block;animation:up .55s both}
+@keyframes up{from{opacity:0;transform:translateY(16px)}}
+.spt{width:170px}.spt i{animation:gr 3.2s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes gr{from{transform:scaleX(0)}}
+.sps{font-size:13px;color:rgba(255,255,255,.75);min-height:20px}
+#sp{cursor:pointer}
+@media (prefers-reduced-motion:reduce){.orb>i,#sh span,.spt i{animation:none}}
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input{-webkit-user-select:text;user-select:text}
+.up{display:block;max-width:100%;max-height:220px;border-radius:10px;margin-bottom:4px;object-fit:contain}
+.bot.ai{white-space:pre-wrap}
+#pic{align-self:center;width:42px;height:42px;flex:none}
+.tb{width:100%;border-collapse:collapse;direction:ltr;font-size:12px;margin:6px 0}
+.tb td,.tb th{border:1px solid var(--line);padding:4px 2px;text-align:center}.tb th{background:var(--bg)}
+.bar{flex-wrap:wrap}.sv{gap:4px}.sv i{font-size:12.5px;padding:9px 0}.tp .fx b{text-align:right}
+.kb{width:100%;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;direction:ltr;padding-top:6px}.kb[hidden]{display:none}
+.kb button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:11px 0;font:inherit;font-size:14px;font-weight:600;cursor:pointer;touch-action:manipulation}.kb button:active{background:var(--acc);color:#101a33}
+
+/* ---------- interactive geometry studio ---------- */
+#geoOpen{border:0;border-radius:10px;background:var(--prbg);color:var(--ink);padding:9px 10px;font:inherit;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}
+#geoPanel{position:fixed;inset:0;z-index:30;background:var(--bg);display:flex;flex-direction:column;color:var(--ink)}
+#geoPanel[hidden]{display:none}
+.geoHead{display:flex;align-items:center;gap:8px;padding:10px;background:var(--card);border-bottom:1px solid var(--line)}
+.geoHead strong{font-size:15px;margin-inline-end:auto}.geoHead button,.geoTools button,.geoFoot button{font:inherit;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:9px;padding:8px 10px;cursor:pointer;touch-action:manipulation}
+.geoTools{display:flex;gap:6px;padding:8px;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--line);flex-shrink:0}
+.geoTools button{white-space:nowrap;font-size:12px}.geoTools button.active{background:var(--prbg);border-color:var(--pr);font-weight:800}
+.geoGroup{position:relative;flex-shrink:0}.geoSub{display:none;position:absolute;z-index:20;top:100%;right:0;min-width:135px;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:11px;box-shadow:0 8px 24px #15213a22;gap:5px;flex-direction:column}.geoGroup.open .geoSub{display:flex}.geoSub button{width:100%;text-align:right}.geoInfo{padding:7px 11px;background:var(--card);border-top:1px solid var(--line);font-size:12px;line-height:1.9;color:var(--ink);max-height:100px;overflow:auto}.geoFoot #geoZoomVal{font-size:11px;min-width:38px;text-align:center;direction:ltr}.geoTools{overflow:visible;flex-wrap:wrap;position:relative;z-index:5}
+#geoCanvas{display:block;width:100%;flex:1;min-height:0;touch-action:none;background:var(--card)}
+.geoFoot{display:flex;align-items:center;gap:6px;padding:5px 7px;background:var(--card);border-top:1px solid var(--line);font-size:10px;flex-wrap:wrap;flex-shrink:0}.geoFoot #geoHelp{font-size:10px;line-height:1.35;flex:1 1 100%;min-width:0;max-height:2.7em;overflow:hidden}.geoFoot button{padding:5px 8px;font-size:11px}.geoFoot span{flex:1;min-width:32px;color:var(--mut)}.geoFoot #geoFinishPolygon[hidden]{display:none}
+@media(max-width:430px){header{gap:6px;padding:9px}.st{font-size:10px}#geoOpen{padding:8px 7px}.geoHead strong{font-size:13px}}
+.geoEdit{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:8px}
+.geoEdit label{font-size:11px;color:var(--mut);display:flex;flex-direction:column;gap:3px}
+.geoEdit input,.geoEdit select{width:100%;min-width:0;border:1px solid var(--line);border-radius:7px;padding:6px;background:var(--bg);color:var(--ink);font:inherit;font-size:12px;direction:ltr}
+.geoEdit button{grid-column:1/-1;border:0;border-radius:8px;background:var(--pr);color:#101a33;padding:8px;font:inherit;font-weight:800}
+.geoInfo{max-height:125px;flex-shrink:0;overflow:auto}
+
+
+#geoCmdBar{padding:6px;border-top:1px solid var(--line);background:var(--card)}
+#geoCmdBar .r{display:flex;gap:4px}#geoCmd{flex:1;direction:ltr;font:600 15px monospace;padding:8px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);min-width:0}
+.gc{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;max-height:84px;overflow:auto}.gc button,#geoCmdBar .r button{font:600 12px Vazirmatn,sans-serif;padding:5px 8px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.gc .nm{border-color:#147dba;color:#147dba}.gc .sy{min-width:28px;direction:ltr}
+#geoAlg{font:13px Vazirmatn,sans-serif;max-height:100px;overflow:auto}#geoAlg div{display:flex;justify-content:space-between;gap:6px;padding:2px 4px;border-bottom:1px dashed var(--line);direction:ltr}
+#geoInfo{max-height:22vh;overflow:auto}#geoCanvas{min-height:230px}.gc{max-height:none}
+:root[data-theme="light"]{color-scheme:light;--bg:transparent;--card:#fff;--ink:#1e2a4a;--mut:#6b7a99;--line:#e3e9f6;--bot:#fff;--me:#5b6cff;--meink:#fff;--pr:#e08a00;--prbg:#fff4d6;--co:#d6336c;--cobg:#ffe8f1;--acc:#5b6cff}
+body{background:linear-gradient(160deg,#eef3ff 0%,#fff3fa 55%,#effcf6 100%) fixed}.app{background:transparent}
+header{background:rgba(255,255,255,.9);backdrop-filter:blur(8px);box-shadow:0 2px 14px rgba(91,108,255,.12)}
+.logo{background:none;width:44px;height:44px;border-radius:14px;box-shadow:0 4px 14px rgba(91,108,255,.35)}.logo svg{width:100%;height:100%}
+.send{background:linear-gradient(135deg,#5b6cff,#e0457b);color:#fff;box-shadow:0 4px 12px rgba(91,108,255,.3)}
+#th,.st{display:none!important}.m.bot{box-shadow:0 2px 10px rgba(30,42,74,.07)}.m.me{background:linear-gradient(135deg,#5b6cff,#8a5bff);color:#fff}
+.chip{background:#eef1ff!important;color:#4252d8!important;border:1px solid #d7ddff!important}
+.geoTools{display:block!important}.geoTabs{display:flex;gap:6px;overflow-x:auto;padding:6px}.geoTabs button{white-space:nowrap;border-radius:999px;border:2px solid var(--c);background:#fff;color:var(--c);font:700 13px Vazirmatn,sans-serif;padding:6px 12px;cursor:pointer}.geoTabs button.on{background:var(--c);color:#fff}
+.geoSec{display:none;flex-wrap:wrap;gap:6px;padding:8px;margin:0 6px 6px;border-radius:14px;background:#f1f4ff}.geoSec.on{display:flex}.geoSec button{font:600 13px Vazirmatn,sans-serif;padding:7px 11px;border-radius:10px;border:1px solid #d7ddff;background:#fff;color:var(--ink);cursor:pointer}.geoSec button.active{background:#5b6cff;color:#fff;border-color:#5b6cff}
+#sp{background:linear-gradient(160deg,#eef3ff,#fff1f7)!important}.geoHead{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}.geoHead strong{flex:1;font-size:14px}.geoHead button{padding:6px 10px!important;font-size:12px!important;min-height:0!important;height:auto!important;border-radius:10px}
+
+#sp{background:linear-gradient(160deg,#eef3ff 0%,#fff0f7 55%,#eafaf3 100%)!important;color:#1e2a4a;overflow:hidden}
+#sp .spi{display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;z-index:2;text-align:center;padding:0 20px}
+.slogo{width:116px;height:116px;filter:drop-shadow(0 12px 28px rgba(91,108,255,.45));animation:flo 3s ease-in-out infinite}.slogo svg{width:100%;height:100%}
+#sp h2{font-size:44px;background:linear-gradient(90deg,#5b6cff,#e0457b,#f59e0b);-webkit-background-clip:text;background-clip:text;color:transparent;margin:0}
+#sp h2{background:none!important;-webkit-text-fill-color:#4252d8;color:#4252d8}#sh span:nth-child(n+5){-webkit-text-fill-color:#e0457b}#sh span{display:inline-block;animation:pop .6s both}.stag{color:#51608a;font-size:14px;font-weight:600}
+.spt{width:190px;height:6px;background:#e3e9f6}.spt i{background:linear-gradient(90deg,#5b6cff,#e0457b);animation:grow 3.1s cubic-bezier(.4,0,.2,1) forwards;transform-origin:right}
+.sps{color:#51608a;font-size:14px;min-height:22px;font-weight:600}.tap{font-size:12px;color:#8a97b8;animation:bl 1.6s infinite}
+.fl b{position:absolute;font-size:30px;color:#5b6cff;opacity:.16;animation:drift 9s ease-in-out infinite}
+.fl b:nth-child(1){top:12%;right:10%}.fl b:nth-child(2){top:22%;left:12%;animation-delay:-2s;color:#e0457b}.fl b:nth-child(3){top:70%;right:14%;animation-delay:-4s}.fl b:nth-child(4){top:80%;left:18%;animation-delay:-1s;color:#f59e0b}.fl b:nth-child(5){top:45%;right:5%;animation-delay:-5s;color:#e0457b}.fl b:nth-child(6){top:50%;left:6%;animation-delay:-3s}.fl b:nth-child(7){top:6%;left:45%;animation-delay:-6s;color:#f59e0b}.fl b:nth-child(8){top:90%;right:45%;animation-delay:-7s}
+@keyframes flo{50%{transform:translateY(-8px) rotate(-2deg)}}@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.7)}}@keyframes grow{from{transform:scaleX(0)}}@keyframes bl{50%{opacity:.2}}@keyframes drift{50%{transform:translateY(-22px) rotate(12deg)}}
+body::before,body::after{content:"";position:fixed;z-index:0;width:60vmax;height:60vmax;border-radius:50%;filter:blur(80px);opacity:.33;pointer-events:none}
+body::before{top:-26vmax;right:-22vmax;background:#9db4ff}body::after{bottom:-26vmax;left:-22vmax;background:#ffb3d3}.app{position:relative;z-index:1}
+h1{background:linear-gradient(90deg,#5b6cff,#e0457b);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:19px}
+.m.bot{border:1px solid #e6ebff;border-radius:18px 18px 18px 6px}.m.me{border-radius:18px 18px 6px 18px;box-shadow:0 4px 12px rgba(91,108,255,.28)}
+.tp{border-inline-start:4px solid #5b6cff;border-radius:14px}.chip{border-radius:999px!important;transition:transform .15s}.chip:active{transform:scale(.94)}
+#in{border-radius:14px!important;border:2px solid #e3e9f6!important;background:#fff!important;color:var(--ink)!important}#in:focus{border-color:#5b6cff!important;box-shadow:0 0 0 4px rgba(91,108,255,.15);outline:0}
+.kb button{border-radius:12px;box-shadow:0 2px 0 #dfe5f7;padding:9px 0}.kb button[data-k="↵"]{background:linear-gradient(135deg,#5b6cff,#e0457b);color:#fff}.kb button[data-k="C"],.kb button[data-k="⌫"]{background:#ffe8f1;color:#d6336c}
+#geoCmdBar,#geoInfo .geoEdit,#geoInfo [style*="font-weight:800"]{display:none!important}
+.m .tags:not(.keep){display:none!important}</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2048%2048%22%20fill%3D%22none%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22lg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%2248%22%20y2%3D%2248%22%3E%3Cstop%20stop-color%3D%22%235b6cff%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e0457b%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%2214%22%20fill%3D%22url%28%23lg%29%22/%3E%3Cpath%20d%3D%22M13%2035V13l22%2022V13%22%20stroke%3D%22%23fff%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3Cpath%20d%3D%22M13%2035a9%209%200%200%201%208-8%22%20stroke%3D%22%23ffe27a%22%20stroke-width%3D%222.4%22%20stroke-linecap%3D%22round%22/%3E%3Ccircle%20cx%3D%2236%22%20cy%3D%2212%22%20r%3D%222.6%22%20fill%3D%22%23ffe27a%22/%3E%3C/svg%3E"><link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2048%2048%22%20fill%3D%22none%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22lg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%2248%22%20y2%3D%2248%22%3E%3Cstop%20stop-color%3D%22%235b6cff%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e0457b%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%2214%22%20fill%3D%22url%28%23lg%29%22/%3E%3Cpath%20d%3D%22M13%2035V13l22%2022V13%22%20stroke%3D%22%23fff%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3Cpath%20d%3D%22M13%2035a9%209%200%200%201%208-8%22%20stroke%3D%22%23ffe27a%22%20stroke-width%3D%222.4%22%20stroke-linecap%3D%22round%22/%3E%3Ccircle%20cx%3D%2236%22%20cy%3D%2212%22%20r%3D%222.6%22%20fill%3D%22%23ffe27a%22/%3E%3C/svg%3E"><meta name="theme-color" content="#ffffff"></head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<div id="sp" aria-label="NSH.made"><div class="fl"><b>π</b><b>∑</b><b>√</b><b>∠</b><b>⚡</b><b>x²</b><b>°</b><b>%</b></div><div class="spi"><div class="slogo"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#5b6cff"/><stop offset="1" stop-color="#e0457b"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#lg)"/><path d="M13 35V13l22 22V13" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 35a9 9 0 0 1 8-8" stroke="#ffe27a" stroke-width="2.4" stroke-linecap="round"/><circle cx="36" cy="12" r="2.6" fill="#ffe27a"/></svg></div><h2 id="sh">NSH.bot</h2><div class="stag">ریاضی و فیزیک هشتم · ساده، باحال، قدم‌به‌قدم ✨</div><div class="spt"><i></i></div><div class="sps" id="ss">در حال آماده‌سازی…</div><div class="tap">برای شروع لمس کن 👆</div></div></div>
+<div class="app">
+<header>
+  <div class="logo" aria-label="نشان NSH"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#5b6cff"/><stop offset="1" stop-color="#e0457b"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#lg)"/><path d="M13 35V13l22 22V13" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 35a9 9 0 0 1 8-8" stroke="#ffe27a" stroke-width="2.4" stroke-linecap="round"/><circle cx="36" cy="12" r="2.6" fill="#ffe27a"/></svg></div>
+  <div><h1>NSH.bot</h1><small>معلم ریاضی و فیزیک هشتم</small></div>
+  <div class="st"><div>امتیاز<b id="sc">۰</b></div><div>رکورد<b id="bs">۰</b></div></div>
+  <button class="cb" id="cb">🎯 چالش</button>
+  <button id="geoOpen" type="button">📐 رسم هندسه</button>
+  <button class="ib" id="th" aria-label="تغییر پوسته">◐</button>
+</header>
+<div id="log" aria-live="polite"></div>
+<div class="tm" id="tm" hidden><i></i></div>
+<div class="bar" id="ask" hidden><button class="big p" id="bp">اول است</button><button class="big c" id="bc">مرکب است</button></div>
+<div class="bar" id="nx" hidden><button class="big p" id="bn">چالش بعدی</button><button class="big c" id="bx">خروج</button></div>
+<form class="bar" id="f" autocomplete="off">
+  <input id="in" inputmode="text" placeholder="یک عدد، مسئله یا سؤال بنویس…" aria-label="عدد">
+  <button type="button" class="ib" id="kt" aria-label="کیبورد ریاضی">⌨</button>
+  <button type="button" class="ib" id="pic" hidden aria-label="ارسال عکس برای تحلیل">📎</button><input type="file" id="fi" accept="image/*" hidden>
+  <button class="send">ارسال</button>
+<div class="kb" id="kb" hidden></div>
+</form>
+<div class="wm"><u></u>Made.NSH</div>
+</div>
+
+<section id="geoPanel" hidden aria-label="محیط رسم هندسه">
+ <div class="geoHead"><strong>📐 کارگاه هندسهٔ NSH.bot</strong><button id="geoUndo" type="button">↶ بازگشت</button><button id="geoClear" type="button">پاک‌کردن</button><button id="geoClose" type="button">✕ بستن</button></div>
+ <div class="geoTools" role="toolbar" aria-label="ابزارهای رسم">
+  <button data-tool="move" class="active">✋ جابه‌جایی</button><button data-tool="point">• نقطه</button>
+  <div class="geoGroup"><button type="button" id="geoLineMenu">خط ▾</button><div class="geoSub" id="geoLineSub"><button data-tool="line">خط راست</button><button data-tool="dashedline">خط‌چین</button><button data-tool="ray">نیم‌خط</button><button data-tool="segment">پاره‌خط</button></div></div>
+  <div class="geoGroup"><button type="button" id="geoShapeMenu">شکل ▾</button><div class="geoSub" id="geoShapeSub"><button data-tool="polygon">چندضلعی آزاد</button><button data-tool="circle">دایره</button><button data-tool="semicircle">نیم‌دایره</button><button data-tool="ellipse">بیضی</button><button data-tool="regular">چندضلعی منتظم</button></div></div>
+   <div class="geoGroup"><button type="button" id="geoAngleMenu">زاویه ▾</button><div class="geoSub" id="geoAngleSub"><button data-tool="angle">رسم زاویه</button><button type="button" data-relation="vertical">متقابل به رأس</button><button type="button" data-relation="adjacent">مجاور</button><button type="button" data-relation="complementary">متمم</button><button type="button" data-relation="supplementary">مکمل</button><button type="button" data-relation="corresponding">متناظر و متبادل</button><button type="button" data-relation="bisector">نیمساز</button></div></div>
+   <div class="geoGroup"><button type="button" id="geoSymmetryMenu">تقارن ▾</button><div class="geoSub" id="geoSymmetrySub"><button data-tool="axialSymmetry">تقارن محوری</button><button data-tool="centralSymmetry">تقارن مرکزی</button><button data-tool="rotationalSymmetry">تقارن دورانی (۱۸۰°)</button></div></div>
+ </div>
+ <canvas id="geoCanvas" aria-label="صفحه مختصات تعاملی"></canvas>
+ <div id="geoCmdBar"><div class="r"><input id="geoCmd" inputmode="none" autocomplete="off" placeholder="A=(1,2)   Midpoint(A,B)   Circle(A,3)"><button id="geoRun" type="button">▶ اجرا</button></div>
+<div class="gc" id="geoNames"></div><details><summary class="cap">⌨ دستورها و کیبورد</summary><div class="gc" id="geoCmds"></div><div class="gc" id="geoLet"></div><div class="gc" id="geoSyms"></div></details>
+<details><summary class="cap">📋 فهرست اشیا (جبری)</summary><div id="geoAlg"></div></details></div>
+<div id="geoInfo" class="geoInfo">یک نقطه یا شکل را انتخاب کن.</div>
+ <div class="geoFoot"><span id="geoHelp" aria-live="polite"></span><button id="geoZoomOut" type="button">−</button><span id="geoZoomVal">1×</span><button id="geoZoomIn" type="button">＋</button><button id="geoHome" type="button">مرکز</button></div>
+</section>
+
+<script>
+const $=i=>document.getElementById(i);
+const log=$('log'),inp=$('in');
+const fa=s=>String(s).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+const sup=e=>String(e).replace(/\d/g,d=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[d]);
+const dig=s=>s.replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+const fmt=n=>'<span class="num">'+n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',')+'</span>';
+const row=(l,v)=>'<div><span>'+l+'</span><b>'+v+'</b></div>';
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+function add(html,cls,text){const d=document.createElement('div');d.className='m '+cls;if(text!==undefined)d.textContent=text;else d.innerHTML=html;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
+function say(html,delay=350){const t=add('<span class="dots"><span></span><span></span><span></span></span>','bot t');return new Promise(r=>setTimeout(()=>{t.className='m bot';t.innerHTML=html;log.scrollTop=log.scrollHeight;r()},delay))}
+
+/* ---------- math ---------- */
+const SM=[2n,3n,5n,7n,11n,13n,17n,19n,23n,29n,31n,37n],DET=3317044064679887385961981n;
+const mod=(b,e,m)=>{let r=1n;b%=m;while(e>0n){if(e&1n)r=r*b%m;b=b*b%m;e>>=1n}return r};
+function isPrime(n){
+  if(n<2n)return false;
+  for(const p of SM){if(n===p)return true;if(n%p===0n)return false}
+  let d=n-1n,s=0;while(d%2n===0n){d/=2n;s++}
+  for(const a of SM){let x=mod(a,d,n);if(x===1n||x===n-1n)continue;let ok=false;
+    for(let i=1;i<s;i++){x=x*x%n;if(x===n-1n){ok=true;break}}if(!ok)return false}
+  return true}
+const gcd=(a,b)=>{while(b){[a,b]=[b,a%b]}return a};
+function rho(n,dead){
+  if(n%2n===0n)return 2n;
+  for(let c=1n;c<40n;c++){let x=2n,y=2n,d=1n,i=0;
+    while(d===1n){x=(x*x+c)%n;y=(y*y+c)%n;y=(y*y+c)%n;d=gcd(x>y?x-y:y-x,n);if((++i&1023)===0&&Date.now()>dead)return null}
+    if(d!==n)return d}
+  return null}
+function factorize(n){
+  const f=new Map(),add=p=>f.set(p,(f.get(p)||0n)+1n),unf=[];
+  for(let p=2n;p<2000n&&p*p<=n;p+=(p===2n?1n:2n)){while(n%p===0n){add(p);n/=p}}
+  const dead=Date.now()+3000,st=[n];
+  while(st.length){const x=st.pop();if(x===1n)continue;if(isPrime(x)){add(x);continue}
+    const d=rho(x,dead);if(!d){unf.push(x);continue}st.push(d,x/d)}
+  return{f,unf}}
+const nextPrime=n=>{let k=n+1n;while(!isPrime(k))k++;return k};
+const prevPrime=n=>{let k=n-1n;while(k>=2n&&!isPrime(k))k--;return k>=2n?k:null};
+const isqrt=n=>{if(n<2n)return n;let x=1n<<BigInt((n.toString(2).length+1)>>1);for(;;){const y=(x+n/x)>>1n;if(y>=x)return x;x=y}};
+let SV=null;const SL=2000000;
+function sieve(){if(SV)return SV;SV=new Uint8Array(SL+1);SV[0]=SV[1]=1;for(let i=2;i*i<=SL;i++)if(!SV[i])for(let j=i*i;j<=SL;j+=i)SV[j]=1;return SV}
+function twoSquares(p){const s=Number(p);for(let a=1;a*a<=s/2;a++){const b2=s-a*a,b=Math.round(Math.sqrt(b2));if(b*b===b2)return[a,b]}return null}
+
+/* ---------- analysis ---------- */
+function analyze(n){
+  let pre='';
+  if(n<0n){pre='<div class="cap">اعداد اول و مرکب مثبت‌اند؛ قدر مطلق عدد را بررسی کردم.</div>';n=-n}
+  if(n<2n){
+    return '<div class="vd z"><div class="vn">'+fmt(n)+'</div><div class="vt">نه اول، نه مرکب</div></div>'+
+    '<div class="cap">'+(n===0n?'صفر را بر هر عددی می‌شود تقسیم کرد؛ برای همین در هیچ‌کدام از این دو دسته نیست.':'عدد ۱ فقط یک مقسوم‌علیه دارد (خودش)، پس نه اول است نه مرکب.')+'</div>'}
+  const prime=isPrime(n),big=n>DET;
+  let h=pre+'<div class="vd '+(prime?'p':'c')+'"><div class="vn">'+fmt(n)+'</div><div class="vt">'+(prime?(big?'احتمالاً اول':'اول است ✓'):'مرکب است')+'</div></div>';
+  const R=[];
+  if(prime){
+    R.push(row('دلیل','فقط بر ۱ و خودش بخش‌پذیر است'));
+    const p=prevPrime(n),q=nextPrime(n);
+    R.push(row('اول قبلی',p?fmt(p):'ندارد'));
+    R.push(row('اول بعدی',fmt(q)));
+  }else{
+    const{f,unf}=factorize(n);
+    const keys=[...f.keys()].sort((a,b)=>a<b?-1:1);
+    let t='<div class="tags">';
+    keys.forEach((p,i)=>{t+=(i?'<span>×</span>':'')+'<span class="tag"><span class="num">'+p+(f.get(p)>1n?sup(f.get(p)):'')+'</span></span>'});
+    unf.forEach(u=>{t+='<span>×</span><span class="tag"><span class="num">'+u+'</span>؟</span>'});
+    h+='<div class="cap">تجزیه به عامل‌های اول</div>'+t+'</div>';
+    if(unf.length)R.push(row('توجه','بخشی از عدد در زمان مجاز تجزیه نشد (علامت ؟)'));
+    else{
+      let dc=1n;f.forEach(e=>{dc*=e+1n});
+      R.push(row('تعداد مقسوم‌علیه‌ها',fa(dc)));
+      if(dc<=48n){let ds=[1n];f.forEach((e,p)=>{const nd=[];for(const d of ds){let m=1n;for(let i=0n;i<=e;i++){nd.push(d*m);m*=p}}ds=nd});
+        ds.sort((a,b)=>a<b?-1:1);R.push(row('مقسوم‌علیه‌ها','<span class="num">'+ds.join('، ')+'</span>'))}
+    }
+    R.push(row('کوچک‌ترین مقسوم‌علیه اول','<span class="num">'+(keys[0]||'؟')+'</span>'));
+    const r=isqrt(n);if(r*r===n)R.push(row('مربع کامل',fmt(r)+'²'));
+  }
+  const dv=[];if(n%2n===0n)dv.push('۲');if(n%3n===0n)dv.push('۳');if(n%5n===0n)dv.push('۵');
+  R.push(row('بخش‌پذیر بر',dv.length?dv.join('، '):'نه ۲، نه ۳، نه ۵'));
+  R.push(row('زوج یا فرد',n%2n===0n?'زوج':'فرد'));
+  const ds=n.toString().split('').reduce((a,c)=>a+ +c,0);
+  R.push(row('مجموع ارقام',fa(ds)+(ds%3===0?' (پس بر ۳ بخش‌پذیر است)':'')));
+  h+='<div class="fx">'+R.join('')+'</div>';
+  if(n<10n**15n){let s='<div class="strip">';for(let k=-4;k<=4;k++){const m=n+BigInt(k);s+='<i class="'+(m>=2n&&isPrime(m)?'p':'')+(k===0?' on':'')+'">'+(m<0n?'·':m)+'</i>'}
+    h+=s+'</div><div class="cap">عددهای کنار آن: خانهٔ زرد یعنی اول</div>'}
+  return h}
+
+/* ---------- chat ---------- */
+const SALT='NSH.made-'+[1,3,9,1].join('');
+const hs=s=>{let h=5381;for(const c of s)h=((h<<5)+h+c.charCodeAt(0))>>>0;return h};
+const sig=b=>String(hs(SALT+'|'+b));
+let lastN=null,mode='chat',cur=null,score=0,streak=0,best=(()=>{const b=+(ls.get('nsh-best')||0);return ls.get('nsh-sig')===sig(b)?b:0})();
+$('bs').textContent=fa(best);
+let tmo=null;
+const bars=m=>{mode=m;$('f').hidden=m!=='chat';$('ask').hidden=m!=='ask';$('nx').hidden=m!=='next';const tm=$('tm');tm.hidden=m!=='ask';clearTimeout(tmo);if(m==='ask'){const i=tm.firstChild;i.style.animation='none';void i.offsetWidth;i.style.animation='';tmo=setTimeout(()=>answer(null),20000)}};
+async function run(n){lastN=n<0n?-n:n;await say(analyze(n),300+Math.min(n.toString().length*25,700))}
+async function handle0(raw){
+  const t=dig(raw).replace(/[,،٬\s]/g,'').replace(/\*\*/g,'^'),w=dig(raw);let m;
+  if(/^[+-]?\d+$/.test(t)){await run(BigInt(t))}
+  else if(await extra(w)){}
+  else if(m=t.match(/^(\d+)\^(\d+)([+-]\d+)?$/)){
+    const e=BigInt(m[2]);if(e>1200n||BigInt(m[1])>10n**6n){return say('این عبارت زیادی بزرگ است. توان را تا ۱۲۰۰ و پایه را تا یک میلیون نگه دار.')}
+    const v=BigInt(m[1])**e+BigInt(m[3]||0);if(v.toString().length>320)return say('نتیجه بیشتر از ۳۲۰ رقم می‌شود؛ کوچک‌ترش کن.');
+    await say('مقدار عبارت: '+fmt(v),200);await run(v)}
+  else if(m=w.match(/(ب\.?م\.?م|ک\.?م\.?م|gcd|lcm)\D*?(\d+)\D+(\d+)/i)){const a=BigInt(m[2]),b=BigInt(m[3]);if(!a||!b)return say('هر دو عدد باید بزرگ‌تر از صفر باشند.');const g=gcd(a,b);await say('ب.م.م('+fmt(a)+'، '+fmt(b)+') = <b>'+fmt(g)+'</b>\nک.م.م = <b>'+fmt(a/g*b)+'</b>'+(g===1n?'\nاین دو عدد نسبت به هم اول‌اند.':''))}
+  else if(/مثلثات|trig/i.test(w)){await say(trigRules(),300)}
+  else if(m=w.match(TRIGRE)){await say(trigCard(TRIGMAP[m[1].toLowerCase()],parseFloat(m[2])),250)}
+  else if(/مثلث|triangle/i.test(w)&&/\d/.test(w)){const ns=(w.match(/\d+(?:\.\d+)?/g)||[]).map(Number);const h=(ns.length===2||ns.length===3)?triCard(ns):null;if(!h&&ns.length<2)need=w;await say(h||'برای حل مثلث، <b>دو ضلع قائم</b> یا <b>سه ضلع</b> را بنویس.\nمثال: <span class="num">مثلث 3 4</span> یا <span class="num">مثلث 5 6 7</span>',250)}
+  else if(/^\s*تحلیل\s*$/.test(w)){if(lastN===null)return say('اول یک عدد بفرست.');await run(lastN)}
+  else if((m=mathNorm(w))){try{const{r,approx}=calc(m);await say(mathCard(m,r,approx),300)}catch(e){await say('<span class="bad">'+(e&&e.fa?e.fa:'این محاسبه را نتوانستم انجام دهم.')+'</span>\nمثال: <span class="num">12×(3+4)</span> یا <span class="num">100÷8</span>',200)}}
+  else if(/غربال/.test(w)){const ns=(w.match(/\d+/g)||[]).map(Number);const N=ns.length?Math.max(...ns):100;if(N<4)return say('یک عدد بزرگ‌تر از ۳ بگو؛ مثلاً «غربال 100».');if(N>1000)return say('غربال را تا ۱۰۰۰ روی جدول نشان می‌دهم؛ عدد کوچک‌تری بگو.');await showSieve(N)}
+  else if(/چالش|بازی/.test(w)){challenge()}
+  else if(m=w.match(/(?:لیست|تا)\s*(\d+)/)){
+    const N=+m[1];if(N>SL)return say('حداکثر تا '+fa(SL.toLocaleString('en-US'))+' را لیست می‌کنم.');
+    const s=sieve(),a=[];for(let i=2;i<=N;i++)if(!s[i])a.push(i);
+    await say('تعداد اعداد اول تا '+fmt(N)+': <b>'+fa(a.length)+'</b>\n<div class="num" style="margin-top:6px">'+a.slice(0,80).join('، ')+(a.length>80?' …':'')+'</div>')}
+  else if(/بعدی/.test(w)){if(lastN===null)return say('اول یک عدد بفرست.');const q=nextPrime(lastN);await say('اول بعد از '+fmt(lastN)+': '+fmt(q),200);await run(q)}
+  else if(/قبلی/.test(w)){if(lastN===null)return say('اول یک عدد بفرست.');const q=prevPrime(lastN);if(!q)return say('قبل از ۲ عدد اولی نیست.');await say('اول قبل از '+fmt(lastN)+': '+fmt(q),200);await run(q)}
+  else if(/تصادفی/.test(w)){const d=3+Math.floor(Math.random()*10);let s=String(1+Math.floor(Math.random()*9));for(let i=1;i<d;i++)s+=Math.floor(Math.random()*10);add('','me','عدد تصادفی: '+s);await run(BigInt(s))}
+  else if(/سلام|hi|hello/i.test(w)){await say('سلام'+(ls.get('nsh-name')?' '+ls.get('nsh-name'):'')+'، خوش آمدی! 😊 امروز چه چیزی را با هم یاد بگیریم؟<div class="tags"><button class="chip" data-q="هندسه">📐 هندسه</button><button class="chip" data-q="جبر">🧮 جبر</button><button class="chip" data-q="فیزیک">⚡ فیزیک</button></div>یا یک عدد یا مسئله بفرست تا حلش کنیم.')}
+  else if(/راهنما|کمک|help/i.test(w)){help()}
+  else{return false}
+}
+function help(){return say('کارهایی که بلدم:\n• یک عدد بفرست تا بگویم اول است یا مرکب\n• «لیست 100»: اعداد اول تا آن عدد\n• «بعدی» و «قبلی»: اول نزدیک آخرین عدد\n• «غربال 100»: غربال اراتستن روی جدول\n• محاسبه: مثل 12×(3+4)، 100÷8، 5! یا √144\n• «مثلثات»: قوانین مثلثات\n• «sin 30» یا «سینوس 30»: نسبت مثلثاتی\n• «مثلث 3 4» یا «مثلث 5 6 7»: حل مثلث\n• دکمهٔ 📎: عکس بفرست (سؤالت را در کادر بنویس) تا تحلیل کنم\n• «هندسه»، «جبر» و «فیزیک»: مباحث هشتم؛ مثلاً «سرعت 100 20» یا «نیرو 5 2»؛ «توضیح …» برای توضیح به دیگران\n• «2x+3=11»: حل معادله\n• دکمهٔ ⌨: کیبورد ریاضی\n• «ب.م.م 12 18»: بزرگ‌ترین مقسوم‌علیه مشترک\n• دکمهٔ 🎯 بالای صفحه: بازی چالش')}
+let lastSend=0;const sendNow=()=>{const n=Date.now();if(n-lastSend<300)return;lastSend=n;const r=inp.value.trim();if(!r){inp.placeholder='اول چیزی بنویس، بعد ارسال را بزن 🙂';inp.focus();return}inp.value='';add('','me',r);Promise.resolve().then(()=>handle(r)).catch(()=>say('خطا در پردازش. ورودی را بررسی کن.'))};
+window.sendNow=sendNow;const sb=document.querySelector('.send');sb.type='button';sb.addEventListener('click',sendNow);$('f').addEventListener('submit',e=>{e.preventDefault();sendNow()});inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendNow()}});
+
+
+/* ---------- calculator ---------- */
+const RB=(n,d=1n)=>{if(d<0n){n=-n;d=-d}const g=gcd(n<0n?-n:n,d)||1n;return{n:n/g,d:d/g}};
+function mathNorm(w){
+  const s=w.replace(/٫/g,'.').replace(/[×⋅∗]/g,'*').replace(/[÷:]/g,'/').replace(/[−–]/g,'-').replace(/\*\*/g,'^')
+   .replace(/جمع|بعلاوه|به‌علاوه/g,'+').replace(/منفی|تفریق/g,'-').replace(/ضرب/g,'*').replace(/تقسیم/g,'/').replace(/توان/g,'^').replace(/باقی‌?مانده/g,'%').replace(/ریشه/g,'√')
+   .replace(/(\d)\s*[xX]\s*(?=[\d(])/g,'$1*').replace(/[,،٬\s]/g,'');
+  return /^[\d+\-*\/^%!√().]+$/.test(s)&&/\d/.test(s)&&/[+\-*\/^%!√(]/.test(s)&&!/^[+-]?\d+$/.test(s)?s:null}
+function calc(S){
+  let i=0,approx=false;const ex=m=>{throw{fa:m}};
+  const dg=r=>Math.max(r.n.toString().length,r.d.toString().length);
+  function expr(){let a=term();while(S[i]==='+'||S[i]==='-'){const o=S[i++],b=term();a=o==='+'?RB(a.n*b.d+b.n*a.d,a.d*b.d):RB(a.n*b.d-b.n*a.d,a.d*b.d)}return a}
+  function term(){let a=un();while(S[i]==='*'||S[i]==='/'||S[i]==='%'||S[i]==='('){const o=S[i]==='('?'*':S[i++],b=un();
+    if(o==='*')a=RB(a.n*b.n,a.d*b.d);
+    else if(o==='/'){if(b.n===0n)ex('تقسیم بر صفر ممکن نیست.');a=RB(a.n*b.d,a.d*b.n)}
+    else{if(a.d!==1n||b.d!==1n)ex('باقی‌مانده فقط برای عددهای صحیح است.');if(b.n===0n)ex('تقسیم بر صفر ممکن نیست.');a=RB(a.n%b.n)}
+    if(dg(a)>4000)ex('نتیجه خیلی بزرگ است.')}return a}
+  function un(){if(S[i]==='-'){i++;const a=un();return RB(-a.n,a.d)}if(S[i]==='+'){i++;return un()}return pw()}
+  function pw(){const a=pf();if(S[i]==='^'){i++;const b=un();if(b.d!==1n)ex('توان باید عدد صحیح باشد.');let e=b.n;if(e>2000n||e<-2000n||dg(a)*Number(e<0n?-e:e)>4000)ex('توان خیلی بزرگ است.');let x=a;if(e<0n){if(x.n===0n)ex('تقسیم بر صفر ممکن نیست.');x=RB(x.d,x.n);e=-e}return RB(x.n**e,x.d**e)}return a}
+  function pf(){let a=pr();while(S[i]==='!'){i++;if(a.d!==1n||a.n<0n||a.n>500n)ex('فاکتوریل فقط برای عدد صحیح ۰ تا ۵۰۰ است.');let f=1n;for(let k=2n;k<=a.n;k++)f*=k;a=RB(f)}return a}
+  function pr(){
+    if(S[i]==='('){i++;const a=expr();if(S[i]!==')')ex('پرانتز بسته نشده است.');i++;return a}
+    if(S[i]==='√'){i++;const a=pr();if(a.n<0n)ex('ریشهٔ عدد منفی تعریف نشده است.');const rn=isqrt(a.n),rd=isqrt(a.d);if(rn*rn===a.n&&rd*rd===a.d)return RB(rn,rd);approx=true;const K=10n**20n;return RB(isqrt(a.n*K*K/a.d),K)}
+    const m=S.slice(i).match(/^(\d+)(?:\.(\d+))?/);if(!m)ex('عبارت را نفهمیدم.');i+=m[0].length;const f=m[2]||'';return RB(BigInt(m[1]+f),10n**BigInt(f.length))}
+  const r=expr();if(i<S.length)ex('عبارت را نفهمیدم.');return{r,approx}}
+function dec(r){const neg=r.n<0n,n=neg?-r.n:r.n;let rem=n%r.d,fr='';for(let j=0;j<10;j++){rem*=10n;fr+=rem/r.d;rem%=r.d}fr=fr.replace(/0+$/,'');return '<span class="num">'+(neg?'-':'')+n/r.d+'.'+(fr||'0')+(rem?'…':'')+'</span>'}
+function mathCard(S,r,approx){
+  const show=S.replace(/\*/g,'×').replace(/\//g,'÷').replace(/-/g,'−');
+  let main,R=[],cap='';
+  if(r.d===1n){const a=r.n<0n?-r.n:r.n,s=a.toString();
+    if(s.length>300){main='<span class="num">'+(r.n<0n?'-':'')+s.slice(0,40)+'…'+s.slice(-40)+'</span>';R.push(row('تعداد رقم‌ها',fa(s.length)))}else main=fmt(r.n);
+    if(a>=2n){lastN=a;cap='<div class="cap">برای بررسی اول یا مرکب بودن این عدد، بنویس «تحلیل».</div>'}
+  }else{main='<span class="num">'+r.n+'/'+r.d+'</span>';R.push(row('به صورت اعشاری',dec(r)));if(approx)R.push(row('توجه','ریشه تقریبی است'))}
+  const dm=S.match(/^(\d+)\/(\d+)$/);
+  if(dm&&BigInt(dm[2])>0n){const a=BigInt(dm[1]),b=BigInt(dm[2]);R.push(row('خارج‌قسمت',fmt(a/b)));R.push(row('باقی‌مانده',fmt(a%b)));R.push(row('بررسی','<span class="num">'+b+' × '+a/b+' + '+a%b+' = '+a+'</span>'))}
+  return '<div class="cap num">'+show+'</div><div class="vd z"><div class="vn">'+main+'</div><div class="vt">جواب</div></div>'+(R.length?'<div class="fx">'+R.join('')+'</div>':'')+cap}
+/* ---------- trigonometry ---------- */
+const TRIGRE=/(sin|cos|tan|cot|کسینوس|کتانژانت|سینوس|تانژانت)\s*\(?\s*(-?\d+(?:\.\d+)?)\s*(?:°|درجه)?\s*\)?/i;
+const TRIGMAP={sin:'sin',cos:'cos',tan:'tan',cot:'cot','سینوس':'sin','کسینوس':'cos','تانژانت':'tan','کتانژانت':'cot'};
+const TEX={0:{s:'0',c:'1',t:'0'},30:{s:'1/2',c:'√3/2',t:'√3/3'},45:{s:'√2/2',c:'√2/2',t:'1'},60:{s:'√3/2',c:'1/2',t:'√3'},90:{s:'1',c:'0',t:null}};
+const r4=x=>{const r=Math.round(x*1e4)/1e4;return String(Object.is(r,-0)?0:r)};
+const NS=x=>'<span class="num">'+x+'</span>';
+function trigCard(fn,deg){
+  const th=((deg%360)+360)%360,rad=deg*Math.PI/180,sn=Math.sin(rad),cs=Math.cos(rad);
+  const und=(fn==='tan'&&Math.abs(cs)<1e-9)||(fn==='cot'&&Math.abs(sn)<1e-9);
+  const val=fn==='sin'?sn:fn==='cos'?cs:fn==='tan'?sn/cs:cs/sn;
+  const R=[];let ex=null;
+  if(Number.isInteger(deg)){
+    const q=th<90?1:th<180?2:th<270?3:4,ref=q===1?th:q===2?180-th:q===3?th-180:360-th;
+    const ss=q<=2?1:-1,cc=(q===1||q===4)?1:-1,sg=(s,x)=>x==='0'?'0':(s<0?'−':'')+x;
+    if(TEX[ref]){
+      if(fn==='sin')ex=sg(ss,TEX[ref].s);else if(fn==='cos')ex=sg(cc,TEX[ref].c);
+      else if(fn==='tan')ex=TEX[ref].t===null?null:sg(ss*cc,TEX[ref].t);
+      else{const o=TEX[90-ref].t;ex=o===null?null:sg(ss*cc,o)}}
+    R.push(row('ناحیه',['اول','دوم','سوم','چهارم'][q-1]+' (زاویهٔ مرجع '+fa(ref)+'°)'))}
+  if(!und&&ex)R.unshift(row('مقدار دقیق',NS(ex)));
+  R.push(row('بر حسب رادیان',NS(r4(rad))+' rad'));
+  return '<div class="cap num">'+fn+'('+r4(deg)+'°)</div><div class="vd z"><div class="vn">'+(und?'تعریف‌نشده':NS(r4(val)))+'</div><div class="vt">جواب</div></div><div class="fx">'+R.join('')+'</div>'+(und?'<div class="cap">این نسبت در این زاویه تعریف نمی‌شود (مخرج صفر است).</div>':(ex?'':'<div class="cap">مقدار دقیق ساده‌ای ندارد؛ عدد بالا تقریبی است.</div>'))}
+function triCard(ns){
+  const A=(a,b,c)=>Math.acos((b*b+c*c-a*a)/(2*b*c))*180/Math.PI;
+  if(ns.length===2){const[a,b]=ns;if(a<=0||b<=0)return null;const c=Math.hypot(a,b);
+    const R=[row('وتر',NS(r4(c))),row('زاویهٔ مقابل ضلع '+r4(a),NS(r4(Math.atan2(a,b)*180/Math.PI)+'°')),row('زاویهٔ مقابل ضلع '+r4(b),NS(r4(Math.atan2(b,a)*180/Math.PI)+'°')),row('مساحت',NS(r4(a*b/2))),row('محیط',NS(r4(a+b+c)))];
+    return '<div class="cap">مثلث قائم‌الزاویه با دو ضلع قائم '+NS(r4(a))+' و '+NS(r4(b))+' (فیثاغورس: c² = a² + b²)</div><div class="fx">'+R.join('')+'</div>'}
+  const[a,b,c]=ns;
+  if(a<=0||b<=0||c<=0||a+b<=c||a+c<=b||b+c<=a)return '<span class="bad">با این سه عدد مثلث ساخته نمی‌شود.</span>\nمجموع هر دو ضلع باید از ضلع سوم بزرگ‌تر باشد.';
+  const s=(a+b+c)/2,ar=Math.sqrt(s*(s-a)*(s-b)*(s-c)),al=A(a,b,c),be=A(b,a,c),ga=A(c,a,b),[x,y,z]=[a,b,c].slice().sort((p,q)=>p-q);
+  const t=Math.abs(z*z-x*x-y*y)<1e-9*z*z?'قائم‌الزاویه':z*z<x*x+y*y?'حاده (همهٔ زاویه‌ها کمتر از ۹۰°)':'منفرجه (یک زاویه بیشتر از ۹۰°)';
+  const kind=(x===z)?'متساوی‌الاضلاع':(x===y||y===z)?'متساوی‌الساقین':'مختلف‌الاضلاع';
+  const R=[row('نوع مثلث',kind+'، '+t),row('زاویهٔ A',NS(r4(al)+'°')),row('زاویهٔ B',NS(r4(be)+'°')),row('زاویهٔ C',NS(r4(ga)+'°')),row('مساحت (هرون)',NS(r4(ar))),row('محیط',NS(r4(a+b+c))),row('شعاع دایرهٔ محیطی',NS(r4(a/(2*Math.sin(al*Math.PI/180)))))];
+  return '<div class="cap">اضلاع a='+NS(r4(a))+'، b='+NS(r4(b))+'، c='+NS(r4(c))+' — زاویه‌ها با قانون کسینوس‌ها: cos A = (b²+c²−a²)/2bc</div><div class="fx">'+R.join('')+'</div>'}
+function trigRules(){
+  const g=(t,r)=>'<div style="margin:10px 0 2px;font-weight:800">'+t+'</div><div class="fx">'+r.map(x=>row(x[0],NS(x[1]))).join('')+'</div>';
+  return '<b>قوانین مثلثات</b>'+
+  g('نسبت‌ها در مثلث قائم‌الزاویه (a مقابل، b مجاور، c وتر)',[['سینوس','sin A = a / c'],['کسینوس','cos A = b / c'],['تانژانت','tan A = a / b'],['کتانژانت','cot A = b / a']])+
+  g('اتحادهای اصلی',[['فیثاغورس','sin²x + cos²x = 1'],['تانژانت','tan x = sin x / cos x'],['کتانژانت','cot x = cos x / sin x'],['اتحاد اول','1 + tan²x = 1 / cos²x'],['اتحاد دوم','1 + cot²x = 1 / sin²x']])+
+  g('متمم، قرینه و مکمل',[['متمم','sin(90°−x) = cos x'],['متمم','cos(90°−x) = sin x'],['منفی','sin(−x) = −sin x'],['منفی','cos(−x) = cos x'],['مکمل','sin(180°−x) = sin x'],['مکمل','cos(180°−x) = −cos x']])+
+  g('مجموع و تفاضل دو زاویه',[['سینوس','sin(a±b) = sin a cos b ± cos a sin b'],['کسینوس','cos(a±b) = cos a cos b ∓ sin a sin b'],['تانژانت','tan(a±b) = (tan a ± tan b) / (1 ∓ tan a tan b)']])+
+  g('زاویهٔ دو برابر',[['سینوس','sin 2x = 2 sin x cos x'],['کسینوس','cos 2x = cos²x − sin²x = 1 − 2sin²x'],['تانژانت','tan 2x = 2 tan x / (1 − tan²x)']])+
+  g('مثلث دلخواه',[['قانون سینوس‌ها','a/sin A = b/sin B = c/sin C = 2R'],['قانون کسینوس‌ها','c² = a² + b² − 2ab cos C'],['مساحت','S = ½ · a · b · sin C']])+
+  '<div style="margin:10px 0 2px;font-weight:800">زاویه‌های مهم</div><table class="tb"><tr><th>x</th><th>0°</th><th>30°</th><th>45°</th><th>60°</th><th>90°</th></tr><tr><th>sin</th><td>0</td><td>1/2</td><td>√2/2</td><td>√3/2</td><td>1</td></tr><tr><th>cos</th><td>1</td><td>√3/2</td><td>√2/2</td><td>1/2</td><td>0</td></tr><tr><th>tan</th><td>0</td><td>√3/3</td><td>1</td><td>√3</td><td>—</td></tr></table>'+
+  '<div class="cap">π رادیان = ۱۸۰ درجه. برای محاسبه بنویس «sin 30» یا «سینوس 45»؛ برای حل مثلث «مثلث 3 4» یا «مثلث 5 6 7».</div>'}
+/* ---------- sieve table ---------- */
+let svc=0;
+async function showSieve(N){
+  const id='sv'+(++svc),cols=N<=30?6:N<=100?10:12,PAL=['#e11d48','#2563eb','#059669','#d97706','#7c3aed','#0891b2','#db2777','#65a30d'];
+  await say('<b>غربال اراتستن تا '+fa(N)+'</b>\n<div class="cap" id="'+id+'c">آماده می‌شویم…</div><div class="sv" id="'+id+'g" style="grid-template-columns:repeat('+cols+',1fr)"></div><div class="lg" id="'+id+'l"></div>',250);
+  const g=$(id+'g'),cap=$(id+'c'),lg=$(id+'l');
+  g.innerHTML=Array.from({length:N},(_,i)=>'<i>'+fa(i+1)+'</i>').join('');
+  const cells=[...g.children],done=new Uint8Array(N+1),lim=Math.floor(Math.sqrt(N));
+  const rm=matchMedia('(prefers-reduced-motion:reduce)').matches,sl=ms=>new Promise(r=>setTimeout(r,rm?0:ms*(N>200?.45:1)));
+  cells[0].className='one';log.scrollTop=log.scrollHeight;await sl(500);
+  cap.textContent='عدد ۱ اول نیست؛ آن را کنار می‌گذاریم.';await sl(900);
+  let ci=0,cnt=0;
+  for(let p=2;p<=lim;p++){
+    if(done[p])continue;
+    const col=PAL[ci++%PAL.length];cells[p-1].className='pr';
+    cap.textContent='عدد '+fa(p)+' اول است؛ ضرب‌های آن را خط می‌زنیم.';await sl(700);
+    for(let m=p*p;m<=N;m+=p)if(!done[m]){done[m]=1;cells[m-1].className='x';cells[m-1].style.setProperty('--c',col)}
+    lg.insertAdjacentHTML('beforeend','<span style="--c:'+col+'">ضرب‌های '+fa(p)+'</span>');
+    log.scrollTop=log.scrollHeight;await sl(900);
+  }
+  for(let k=2;k<=N;k++)if(!done[k]){cells[k-1].className='pr';cnt++}
+  cap.innerHTML='تمام شد! خانه‌های زرد اول‌اند: <b>'+fa(cnt)+'</b> عدد تا '+fa(N)+'.';
+  log.scrollTop=log.scrollHeight}
+/* ---------- challenge ---------- */
+async function challenge(){
+  const d=Math.min(2+Math.floor(streak/2),12);let s=String(1+Math.floor(Math.random()*9));for(let i=1;i<d;i++)s+=Math.floor(Math.random()*10);
+  let n=BigInt(s);if(Math.random()<.5)n=nextPrime(n);else if(isPrime(n))n+=1n;
+  cur=n;bars('ask');await say('<b>چالش'+(streak?' — '+fa(streak)+' پیاپی 🔥':'')+'</b>\nعدد '+fmt(n)+' اول است یا مرکب؟\n<span class="cap">۲۰ ثانیه وقت داری ⏱</span>',300)}
+async function answer(g){
+  if(cur===null)return;const n=cur,ok=g!==null&&isPrime(n)===g;cur=null;
+  add('','me',g===null?'⏱ وقت تمام شد':g?'اول است':'مرکب است');bars('next');
+  if(ok){score+=10+streak*3;streak++;$('sc').textContent=fa(score);if(score>best){best=score;ls.set('nsh-best',best);ls.set('nsh-sig',sig(best));$('bs').textContent=fa(best)}}else streak=0;
+  lastN=n;await say((ok?'<span class="ok">درست گفتی! ✓</span>':'<span class="bad">اشتباه بود ✗</span>')+'\n'+analyze(n))}
+$('bp').onclick=()=>answer(true);$('bc').onclick=()=>answer(false);
+$('bn').onclick=()=>{add('','me','چالش بعدی');challenge()};
+$('bx').onclick=()=>{bars('chat');say('چالش تمام شد. امتیاز: <b>'+fa(score)+'</b>. هر وقت خواستی دوباره «چالش» را بزن.',200);inp.focus()};
+
+/* ---------- image analysis ---------- */
+(async()=>{
+  let sample=null,lim=null,busy=false;
+  try{sample=window.claude?await claude.use('sample'):null;if(sample)lim=await sample.limits()}catch(e){sample=null}
+  if(!sample||!lim||!lim.images)return;
+  $('fi').accept=(lim.images.mediaTypes||['image/*']).join(',');
+  $('pic').hidden=false;
+  $('pic').onclick=()=>{if(mode==='chat'&&!busy)$('fi').click()};
+  const MSG={not_granted:'اجازهٔ استفاده از Claude داده نشد.',rate_limited:'درخواست‌ها زیاد است؛ کمی بعد دوباره امتحان کن.',image_rejected:'این عکس قابل پردازش نیست؛ عکس دیگری بفرست.',refused:'نتوانستم این عکس را تحلیل کنم.',session_expired:'باید دوباره وارد حساب Claude شوی.'};
+  $('fi').onchange=async()=>{
+    const f=$('fi').files[0];$('fi').value='';if(!f||busy)return;
+    if(lim.images.maxInputBytes&&f.size>lim.images.maxInputBytes){say('حجم عکس زیاد است؛ عکس کوچک‌تری بفرست.',150);return}
+    const q=inp.value.trim();inp.value='';busy=true;
+    const d=add('','me'),im=new Image();im.src=URL.createObjectURL(f);im.className='up';im.alt='';d.appendChild(im);
+    if(q){const p=document.createElement('div');p.textContent=q;d.appendChild(p)}
+    const t=add('<span class="dots"><span></span><span></span><span></span></span>','bot t');
+    const prompt='تو NSH.bot هستی، دستیار ریاضی پایهٔ هشتم (هندسه، جبر، اعداد اول، مثلثات). اگر شکل هندسی هست، زاویه‌ها و ضلع‌ها را با قاعده‌های هندسهٔ هشتم حساب کن. این عکس را بررسی کن و به فارسی ساده و در حد دانش‌آموز پاسخ بده. اگر در عکس مسئلهٔ ریاضی، عدد، مثلث یا نمودار هست، آن را بخوان و مرحله‌به‌مرحله حل کن (در مثلثات از نسبت‌های مثلثاتی و قانون سینوس‌ها و کسینوس‌ها کمک بگیر). اگر عدد صحیحی دیده می‌شود، بگو اول است یا مرکب و تجزیه‌اش را بنویس. اگر عکس ربطی به ریاضی ندارد، کوتاه بگو چه می‌بینی و بپرس چه کمکی می‌خواهد. پاسخ را کوتاه نگه دار و فقط متن ساده بنویس، بدون مارک‌داون و بدون HTML.'+(q?'\nسؤال کاربر دربارهٔ عکس: '+q:'');
+    try{
+      await sample(prompt,{images:[f],modelTier:'default',cache:false,onText:({text})=>{t.className='m bot ai';t.textContent=text;log.scrollTop=log.scrollHeight}});
+    }catch(e){
+      if(e&&e.text){t.className='m bot ai';t.textContent=e.text}
+      else{t.className='m bot';t.textContent=(e&&MSG[e.code])||'تحلیل عکس انجام نشد؛ دوباره امتحان کن.'}
+    }finally{busy=false;log.scrollTop=log.scrollHeight}
+  };
+})();
+
+/* ---------- interactive geometry studio logic ---------- */
+(function(){
+ const panel=$('geoPanel'),canvas=$('geoCanvas'),ctx=canvas.getContext('2d');if(!ctx)return;
+ let tool='move',objects=[],draft=[],undoStack=[],scale=38,ox=0,oy=0,drag=null,gesture=null,poly=[],selected=null,nextName=0,regularSides=5;const pointers=new Map();
+ const help={move:'نقطه یا رأس را بکش؛ داخل شکل را برای جابه‌جایی کل شکل بکش؛ فضای خالی صفحه را حرکت می‌دهد.',point:'روی شبکه کلیک کن تا نقطه‌ای با نام A، B، C… ساخته شود.',line:'دو نقطه را انتخاب کن؛ روی نقاط موجود کلیک کن تا دوباره استفاده شوند.',dashedline:'دو نقطه را انتخاب کن تا خط‌چین رسم شود.',segment:'دو سر پاره‌خط را انتخاب کن؛ نقاط موجود قابل اتصال‌اند.',ray:'اول مبدأ و بعد نقطهٔ جهت را انتخاب کن.',circle:'مرکز و سپس نقطه‌ای روی محیط را انتخاب کن.',semicircle:'مرکز و سپس شعاع را انتخاب کن.',ellipse:'مرکز و سپس اندازهٔ بیضی را مشخص کن.',regular:'ابتدا تعداد ضلع را انتخاب کن؛ سپس مرکز و یک رأس را روی صفحه مشخص کن.',angle:'سه نقطه را انتخاب کن: نقطهٔ اول، رأس زاویه، نقطهٔ سوم.',axialSymmetry:'یک شکل بسته را انتخاب کن، سپس دو نقطه برای محور تقارن بزن.',centralSymmetry:'یک شکل بسته را انتخاب کن، سپس مرکز تقارن را مشخص کن.',rotationalSymmetry:'یک شکل بسته را انتخاب کن، سپس مرکز دوران را مشخص کن؛ شکل ۱۸۰ درجه می‌چرخد.',polygon:'رأس‌ها را به‌ترتیب انتخاب کن؛ نزدیک رأس اول کلیک کن یا «تمام چندضلعی» را بزن.',triangle:'دو گوشهٔ کادر را انتخاب کن تا مثلث ساخته شود.',rectangle:'دو گوشهٔ مقابل مستطیل را انتخاب کن.',square:'یک گوشه و سپس گوشهٔ مقابل مربع را انتخاب کن.'};
+ const toScreen=p=>({x:ox+p.x*scale,y:oy-p.y*scale}),toWorld=(x,y)=>({x:(x-ox)/scale,y:(oy-y)/scale});
+ const snap=p=>{const step=scale<=76?1:Math.max(1e-9,Math.pow(10,Math.floor(Math.log10(10/scale))));return{x:Math.round(p.x/step)*step,y:Math.round(p.y/step)*step}};function resize(){const r=canvas.getBoundingClientRect(),d=window.devicePixelRatio||1;canvas.width=Math.max(1,Math.round(r.width*d));canvas.height=Math.max(1,Math.round(r.height*d));ctx.setTransform(d,0,0,d,0,0);if(!ox){ox=r.width/2;oy=r.height/2}draw()}
+ function snapshot(){undoStack.push(JSON.stringify({objects,scale,ox,oy,poly,nextName,selected}));if(undoStack.length>60)undoStack.shift()}
+ function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+ function allVertices(){const a=[];objects.forEach((o,oi)=>{if(o.type==='point')a.push({p:o.p,owner:o,index:0,oi,name:o.name});else (o.points||((o.a&&o.b)?[o.a,o.b]:[])).forEach((p,i)=>a.push({p,owner:o,index:i,oi,name:o.names?.[i]||''}))});return a}
+ function nearestPoint(screen,limit=22){let best=null,bd=limit;for(const v of allVertices()){const d=dist(screen,toScreen(v.p));if(d<bd){best=v;bd=d}}return best}
+ function getOrCreate(p,screen){const n=nearestPoint(screen,24);if(n)return {...n.p};const q=snap(p);const pt={type:'point',p:q,name:window.GEO.nn()};objects.push(pt);return {...q}}
+ function letter(n){let s='';n++;while(n){n--;s=String.fromCharCode(65+n%26)+s;n=Math.floor(n/26)}return s}
+ function nameAt(p){for(const o of objects){if(o.type==='point'&&dist(o.p,p)<.12)return o.name}return null}
+ function draw(){if(!canvas.width)return;if(window.GEO&&GEO.recalc)GEO.recalc();const r=canvas.getBoundingClientRect(),w=r.width,h=r.height,d=window.devicePixelRatio||1;ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,w,h);ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--card').trim()||'#fff';ctx.fillRect(0,0,w,h);
+  const gap=scale;const nice=[1,2,5];let step=1;while(gap*step<48)step*=10;while(gap*step>105)step/=10;let best=step,err=Infinity;for(const p of [step/10,step,step*10])for(const n of nice){const v=p*n;if(v>0){const e=Math.abs(Math.log(Math.max(1,gap*v)/72));if(e<err){err=e;best=v}}}step=best;const minor=step/5;ctx.lineWidth=1;ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--line').trim()||'#ddd';ctx.globalAlpha=.62;ctx.beginPath();const minorPx=gap*minor;if(minorPx>=13){for(let x=((ox%(minorPx))+(minorPx))%(minorPx);x<w;x+=minorPx){ctx.moveTo(x,0);ctx.lineTo(x,h)}for(let y=((oy%(minorPx))+(minorPx))%(minorPx);y<h;y+=minorPx){ctx.moveTo(0,y);ctx.lineTo(w,y)}}ctx.stroke();ctx.globalAlpha=1;ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--mut').trim()||'#899';ctx.lineWidth=1.1;ctx.beginPath();for(let x=((ox%(gap*step))+(gap*step))%(gap*step);x<w;x+=gap*step){ctx.moveTo(x,0);ctx.lineTo(x,h)}for(let y=((oy%(gap*step))+(gap*step))%(gap*step);y<h;y+=gap*step){ctx.moveTo(0,y);ctx.lineTo(w,y)}ctx.stroke();
+  ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--mut').trim()||'#667';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(w,oy);ctx.moveTo(ox,0);ctx.lineTo(ox,h);ctx.stroke();ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--ink').trim()||'#334';ctx.font='600 12px Vazirmatn,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';const labelEvery=step*gap;for(let k=Math.ceil((0-ox)/labelEvery);k<=Math.floor((w-ox)/labelEvery);k++){const val=k*step,x=ox+val*scale;if(Math.abs(x-ox)>labelEvery*.35&&x>12&&x<w-12)ctx.fillText(String(val),x,Math.min(h-17,Math.max(4,oy+7)))}ctx.textAlign='right';ctx.textBaseline='middle';for(let k=Math.ceil((oy-h)/labelEvery);k<=Math.floor(oy/labelEvery);k++){const val=-k*step,y=oy+k*labelEvery;if(val&&y>14&&y<h-12)ctx.fillText(String(val),Math.max(30,Math.min(w-5,ox-8)),y)}
+  objects.forEach(o=>drawObj(o));if(draft.length){ctx.save();ctx.strokeStyle='#d59a35';ctx.setLineDash([5,4]);ctx.lineWidth=2;ctx.beginPath();if(draft.length===1){const p=toScreen(draft[0]);ctx.arc(p.x,p.y,5,0,Math.PI*2)}else if(['line','dashedline','segment','ray'].includes(tool))lineSeg(draft[0],draft[1],tool);else if(['circle','semicircle','ellipse'].includes(tool)){const a=toScreen(draft[0]),b=toScreen(draft[1]);ctx.ellipse(a.x,a.y,Math.max(1,Math.abs(b.x-a.x)),tool==='circle'?Math.max(1,Math.abs(b.x-a.x)):Math.max(1,Math.abs(b.y-a.y)),0,tool==='semicircle'?Math.PI:0,Math.PI*2)}ctx.stroke();ctx.restore()}
+  if(poly.length){ctx.save();ctx.strokeStyle='#d59a35';ctx.setLineDash([5,4]);ctx.beginPath();poly.forEach((p,i)=>{const q=toScreen(p);i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke();ctx.setLineDash([]);poly.forEach((p,i)=>vertex(p,letter(i)));ctx.restore()}
+  $('geoZoomVal').textContent=(scale/38).toLocaleString('fa-IR',{maximumFractionDigits:2})+'×';
+ }
+ function vertex(p,label){const q=toScreen(p);ctx.beginPath();ctx.fillStyle='#147dba';ctx.arc(q.x,q.y,4.5,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();if(label){ctx.font='bold 12px sans-serif';ctx.textAlign='left';ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--ink').trim()||'#172';ctx.fillText(label,q.x+7,q.y-7)}}
+ function lineSeg(a,b,mode){let A=toScreen(a),B=toScreen(b),dx=B.x-A.x,dy=B.y-A.y;if(mode==='segment'){ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);return}const L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L;ctx.moveTo(A.x+ux*(mode==='line'?-4000:0),A.y+uy*(mode==='line'?-4000:0));ctx.lineTo(A.x+ux*4000,A.y+uy*4000)}
+ function drawObj(o){ctx.save();ctx.lineWidth=selected===o?3:2;ctx.strokeStyle=selected===o?'#d59a35':(o.type==='circle'||o.type==='ellipse'||o.type==='semicircle'?'#7357d5':'#147dba');ctx.fillStyle=selected===o?'rgba(213,154,53,.12)':'rgba(20,125,186,.08)';ctx.beginPath();if(o.type==='point'){vertex(o.p,o.name);ctx.restore();return}else if(['line','dashedline','segment','ray'].includes(o.type)){if(o.type==='dashedline')ctx.setLineDash([7,5]);lineSeg(o.a,o.b,o.type==='dashedline'?'line':o.type);ctx.setLineDash([]);ctx.stroke();vertex(o.a,o.names?.[0]||nameAt(o.a));vertex(o.b,o.names?.[1]||nameAt(o.b))}else if(['circle','ellipse','semicircle'].includes(o.type)){const a=toScreen(o.a),b=toScreen(o.b),rx=Math.max(1,Math.abs(b.x-a.x)),ry=o.type==='circle'?rx:Math.max(1,Math.abs(b.y-a.y));ctx.ellipse(a.x,a.y,rx,ry,0,o.type==='semicircle'?Math.PI:0,Math.PI*2);if(o.type!=='semicircle')ctx.fill();ctx.stroke();vertex(o.a,nameAt(o.a));vertex(o.b,nameAt(o.b))}else if(o.type==='angle'){const ps=o.points.map(toScreen);ctx.beginPath();ctx.moveTo(ps[0].x,ps[0].y);ctx.lineTo(ps[1].x,ps[1].y);ctx.lineTo(ps[2].x,ps[2].y);ctx.stroke();const a=Math.atan2(ps[0].y-ps[1].y,ps[0].x-ps[1].x),b=Math.atan2(ps[2].y-ps[1].y,ps[2].x-ps[1].x),r=22;ctx.beginPath();ctx.arc(ps[1].x,ps[1].y,r,a,b,((b-a+Math.PI*2)%(Math.PI*2))>Math.PI);ctx.stroke();ps.forEach((p,i)=>vertex(o.points[i],o.names?.[i]||letter(i)))}else{const ps=o.points||[],ss=ps.map(toScreen);ss.forEach((q,i)=>i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y));if(o.closed)ctx.closePath();if(o.closed)ctx.fill();ctx.stroke();ps.forEach((p,i)=>vertex(p,o.names?.[i]||nameAt(p)||letter(i)))}ctx.restore()}
+ function setTool(t){tool=t;document.querySelectorAll('.geoTools [data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===t));$('geoHelp').textContent=help[t]||help.move;draft=[];poly=[];const fin=$('geoFinishPolygon');if(fin)fin.hidden=t!=='polygon';draw()}
+ $('geoLineMenu').onclick=()=>{$('geoLineMenu').parentElement.classList.toggle('open');document.querySelectorAll('.geoGroup').forEach(g=>{if(g!==$('geoLineMenu').parentElement)g.classList.remove('open')})};
+ $('geoShapeMenu').onclick=()=>{$('geoShapeMenu').parentElement.classList.toggle('open');document.querySelectorAll('.geoGroup').forEach(g=>{if(g!==$('geoShapeMenu').parentElement)g.classList.remove('open')})};
+ $('geoAngleMenu').onclick=()=>{$('geoAngleMenu').parentElement.classList.toggle('open');document.querySelectorAll('.geoGroup').forEach(g=>{if(g!==$('geoAngleMenu').parentElement)g.classList.remove('open')})};
+ const relationHelp={vertical:'متقابل به رأس: دو زاویهٔ روبه‌رو که از تقاطع دو خط ساخته می‌شوند، با هم برابرند.',adjacent:'زاویه‌های مجاور: رأس و یک ضلع مشترک دارند و داخلشان روی هم نمی‌افتد.',complementary:'زاویه‌های متمم: مجموع اندازهٔ دو زاویه ۹۰ درجه است.',supplementary:'زاویه‌های مکمل: مجموع اندازهٔ دو زاویه ۱۸۰ درجه است.',corresponding:'زاویه‌های متناظر و متبادل: وقتی یک خط، دو خط موازی را قطع کند، زاویه‌های متناظر و متبادل داخلی برابرند.',bisector:'نیمساز: نیم‌خطی از رأس زاویه که آن را به دو زاویهٔ مساوی تقسیم می‌کند.'};
+ document.querySelectorAll('[data-relation]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.relation;document.querySelectorAll('.geoGroup').forEach(g=>g.classList.remove('open'));$('geoHelp').textContent=relationHelp[k]||'رابطهٔ زاویه‌ها';$('geoInfo').innerHTML='<span class="infoTitle">'+b.textContent+'</span><div class="infoGroup"><span class="infoRow">'+relationHelp[k]+'</span><span class="infoRow">برای بررسی این رابطه، زاویه‌ها یا خط‌های مربوط را روی صفحه رسم و رأس‌ها را با ابزار جابه‌جایی تغییر بده.</span></div>';if(k==='bisector')setTool('angle');}));
+ $('geoSymmetryMenu').onclick=()=>{$('geoSymmetryMenu').parentElement.classList.toggle('open');document.querySelectorAll('.geoGroup').forEach(g=>{if(g!==$('geoSymmetryMenu').parentElement)g.classList.remove('open')})};
+ $('geoInfo').addEventListener('click',e=>{if(e.target.id!=='geoApplyCoords'||!selected)return;snapshot();const ins=[...$('geoInfo').querySelectorAll('[data-vertex]')];const updates={};ins.forEach(i=>{const k=i.dataset.vertex;updates[k]=updates[k]||{};updates[k][i.dataset.axis]=Number(i.value)});const ps=selected.type==='point'?[selected.p]:selected.points||[selected.a,selected.b];Object.keys(updates).forEach(k=>{const i=+k;if(!ps[i])return;const old={...ps[i]},ux=updates[k].x,uy=updates[k].y,q={x:Number.isFinite(ux)?ux:old.x,y:Number.isFinite(uy)?uy:old.y};if(selected.type==='point'){selected.p=q;moveShared(old,q)}else if(selected.points){selected.points[i]=q;moveShared(old,q)}else{if(i===0)selected.a=q;else selected.b=q;moveShared(old,q)}});draw();showInfo(selected)});
+ $('geoOpen').addEventListener('click',()=>{panel.hidden=false;resize()});$('geoClose').addEventListener('click',()=>{panel.hidden=true});document.querySelectorAll('.geoTools [data-tool]').forEach(b=>b.addEventListener('click',()=>{const t=b.dataset.tool;if(t==='regular'){const answer=prompt('چندضلعی منتظم چند ضلع داشته باشد؟ (۳ تا ۱۰۰)','5');if(answer===null)return;const n=Number(dig(answer).trim());if(!Number.isInteger(n)||n<3||n>100){$('geoInfo').textContent='تعداد ضلع باید یک عدد صحیح بین ۳ تا ۱۰۰ باشد.';return}regularSides=n}setTool(t);document.querySelectorAll('.geoGroup').forEach(g=>g.classList.remove('open'))}));
+ $('geoUndo').onclick=()=>{const v=undoStack.pop();if(v){const o=JSON.parse(v);objects=o.objects;scale=o.scale;ox=o.ox;oy=o.oy;poly=o.poly||[];nextName=o.nextName||0;selected=o.selected||null;draft=[];draw();showInfo(selected)}};
+ $('geoClear').onclick=()=>{snapshot();objects=[];draft=[];poly=[];selected=null;nextName=0;draw();showInfo(null)};
+ function zoomAt(z,p){const world=toWorld(p.x,p.y);scale=Math.max(1.5,Math.min(38000000,z));ox=p.x-world.x*scale;oy=p.y+world.y*scale;draw()}
+ $('geoZoomIn').onclick=()=>zoomAt(scale*2,{x:canvas.clientWidth/2,y:canvas.clientHeight/2});$('geoZoomOut').onclick=()=>zoomAt(scale/2,{x:canvas.clientWidth/2,y:canvas.clientHeight/2});$('geoHome').onclick=()=>{const r=canvas.getBoundingClientRect();ox=r.width/2;oy=r.height/2;scale=38;draw()};
+ function pointAt(e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+ canvas.addEventListener('wheel',e=>{e.preventDefault();const p=pointAt(e);zoomAt(scale*(e.deltaY<0?1.12:.89),p)},{passive:false});
+ function inside(p,ps){let c=false;for(let i=0,j=ps.length-1;i<ps.length;j=i++){if(((ps[i].y>p.y)!==(ps[j].y>p.y))&&(p.x<(ps[j].x-ps[i].x)*(p.y-ps[i].y)/(ps[j].y-ps[i].y)+ps[i].x))c=!c}return c}
+ function segDist(p,a,b){const dx=b.x-a.x,dy=b.y-a.y,t=Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy||1)));return dist(p,{x:a.x+t*dx,y:a.y+t*dy})}
+ function hitObject(p){for(let i=objects.length-1;i>=0;i--){const o=objects[i];if(o.type==='point')continue;if(o.type==='angle'){const ps=o.points.map(toScreen);if(segDist(p,ps[0],ps[1])<11||segDist(p,ps[1],ps[2])<11)return o}if(o.type==='polygon'||o.closed){const ps=o.points.map(toScreen);if(inside(p,ps))return o}if(o.points){const ps=o.points.map(toScreen);for(let j=0;j<ps.length;j++)if(segDist(p,ps[j],ps[(j+1)%ps.length])<11)return o}else if(o.a&&o.b){if(['line','dashedline','segment','ray'].includes(o.type)){if(segDist(p,toScreen(o.a),toScreen(o.b))<11)return o}else{const a=toScreen(o.a),b=toScreen(o.b),rad=dist(a,b),dp=dist(p,a);if(Math.abs(dp-rad)<11||((o.type==='circle'||o.type==='ellipse')&&dp<rad-5)||(o.type==='semicircle'&&dp<rad-5&&p.y>=a.y))return o}}}return null}
+ function createPointAt(p,s){const n=nearestPoint(s,24);if(n)return {...n.p};const q=snap(p);const nm=window.GEO.nn();objects.push({type:'point',p:q,name:nm});return {...q}}
+ function moveShared(oldp,newp){for(const o of objects){if(o.type==='point'){if(dist(o.p,oldp)<.001)o.p={...newp}}else if(o.points)o.points=o.points.map(p=>dist(p,oldp)<.001?{...newp}:p);else {if(o.a&&dist(o.a,oldp)<.001)o.a={...newp};if(o.b&&dist(o.b,oldp)<.001)o.b={...newp}}}}
+ function onDown(e){canvas.setPointerCapture(e.pointerId);const p=pointAt(e);pointers.set(e.pointerId,p);if(pointers.size===2){const a=[...pointers.values()];gesture={dist:dist(a[0],a[1]),scale,mid:{x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2},ox,oy};drag=null;return}if(pointers.size>1)return;const wp=toWorld(p.x,p.y);
+  if(tool==='move'){const v=nearestPoint(p,19);if(v){snapshot();selected=v.owner;drag={kind:'vertex',owner:v.owner,index:v.index,old:{...v.p},start:wp,orig:v.owner.type==='point'?{...v.owner.p}:v.owner.points?.map(q=>({...q}))};showInfo(selected);draw();return}const o=hitObject(p);if(o){snapshot();selected=o;drag={kind:'shape',owner:o,start:wp,orig:o.points?.map(q=>({...q}))||null,origA:o.a?{...o.a}:null,origB:o.b?{...o.b}:null};showInfo(selected);draw();return}selected=null;drag={kind:'pan',x:p.x,y:p.y,ox,oy};showInfo(null);return}
+  if(tool==='point'){snapshot();const q=createPointAt(wp,p);selected=objects.find(o=>o.type==='point'&&dist(o.p,q)<.001)||null;draw();showInfo(selected);return}
+  if(tool==='polygon'){const close=poly.length>=3&&dist(p,toScreen(poly[0]))<24;if(close){snapshot();objects.push({type:'polygon',points:poly.map(q=>({...q})),closed:true,names:poly.map((_,i)=>letter(i))});poly=[];selected=objects[objects.length-1];draw();showInfo(selected);return}const q=createPointAt(wp,p);if(!poly.length||dist(q,poly[poly.length-1])>.05)poly.push(q);draw();if(poly.length>=3)$('geoHelp').textContent='برای بستن، نزدیک رأس اول کلیک کن یا «تمام چندضلعی» را بزن.';return}
+  if(['line','dashedline','segment','ray'].includes(tool)){const q=createPointAt(wp,p);draft.push(q);if(draft.length===2){if(dist(draft[0],draft[1])>.05){snapshot();const o={type:tool,a:{...draft[0]},b:{...draft[1]},names:[nameAt(draft[0])||window.GEO.nn(),nameAt(draft[1])||window.GEO.nn()]};objects.push(o);selected=o;showInfo(o)}draft=[]}draw();return}
+  if(['circle','semicircle','ellipse'].includes(tool)){const q=snap(wp);draft.push(q);if(draft.length===2){snapshot();const o={type:tool,a:draft[0],b:draft[1]};objects.push(o);selected=o;draft=[];draw();showInfo(o)}else draw();return}
+  if(tool==='angle'){const q=createPointAt(wp,p);draft.push(q);if(draft.length===3){if(dist(draft[0],draft[1])<1e-8||dist(draft[2],draft[1])<1e-8){draft=[];$('geoHelp').textContent='نقطهٔ رأس نباید با دو نقطهٔ دیگر یکی باشد؛ سه نقطهٔ متفاوت انتخاب کن.';draw();return}snapshot();const o={type:'angle',points:draft.map(v=>({...v})),names:draft.map((_,i)=>letter(i))};objects.push(o);selected=o;draft=[];draw();showInfo(o);$('geoHelp').textContent='زاویه رسم شد؛ رأس، نقطهٔ دوم است. برای تغییر شکل، هر رأس آبی را بکش.'}else{$('geoHelp').textContent=['نقطهٔ اول را انتخاب کن.','حالا رأس زاویه (نقطهٔ دوم) را انتخاب کن.'][draft.length-1];draw()}return}
+  if(['axialSymmetry','centralSymmetry','rotationalSymmetry'].includes(tool)){
+   const base=selected&&selected.closed&&selected.points?selected:null;
+   if(!base){$('geoInfo').textContent='ابتدا یک شکل بسته (مثلث یا چندضلعی) را انتخاب کن، سپس ابزار تقارن را بزن.';return}
+   const q=snap(wp);draft.push(q);
+   const need=tool==='axialSymmetry'?2:1;
+   if(draft.length===need){snapshot();const pts=base.points.map(v=>{if(tool==='axialSymmetry'){const a=draft[0],b=draft[1],dx=b.x-a.x,dy=b.y-a.y,L=dx*dx+dy*dy||1,t=((v.x-a.x)*dx+(v.y-a.y)*dy)/L,proj={x:a.x+t*dx,y:a.y+t*dy};return {x:2*proj.x-v.x,y:2*proj.y-v.y}}if(tool==='centralSymmetry')return {x:2*q.x-v.x,y:2*q.y-v.y};return {x:2*q.x-v.x,y:2*q.y-v.y}});const o={type:'polygon',points:pts,closed:true,names:pts.map((_,i)=>letter(i))};objects.push(o);if(tool==='axialSymmetry')objects.push({type:'dashedline',a:{...draft[0]},b:{...draft[1]}});else objects.push({type:'point',p:{...q},name:'O'});selected=o;draft=[];draw();showInfo(o)}else draw();return
+  }
+  if(tool==='regular'){const q=snap(wp);draft.push(q);if(draft.length===2){const center=draft[0],edge=draft[1],n=regularSides,r=dist(center,edge),start=Math.atan2(edge.y-center.y,edge.x-center.x),pts=Array.from({length:n},(_,i)=>({x:center.x+r*Math.cos(start+2*Math.PI*i/n),y:center.y+r*Math.sin(start+2*Math.PI*i/n)}));snapshot();const o={type:'regular',points:pts,closed:true,names:pts.map((_,i)=>letter(i))};objects.push(o);selected=o;draft=[];draw();showInfo(o)}else draw();return}
+  if(['triangle','rectangle','square'].includes(tool)){const q=snap(wp);draft.push(q);if(draft.length===2){const a=draft[0],b=draft[1];let pts;if(tool==='triangle')pts=[a,{x:b.x,y:a.y},b];else if(tool==='rectangle')pts=[a,{x:b.x,y:a.y},b,{x:a.x,y:b.y}];else{const side=Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y)),sx=Math.sign(b.x-a.x)||1,sy=Math.sign(b.y-a.y)||1;pts=[a,{x:a.x+sx*side,y:a.y},{x:a.x+sx*side,y:a.y+sy*side},{x:a.x,y:a.y+sy*side}]}snapshot();const o={type:tool,points:pts,closed:true,names:pts.map((_,i)=>letter(i))};objects.push(o);selected=o;draft=[];draw();showInfo(o)}else draw()}
+ }
+ canvas.addEventListener('pointerdown',onDown);
+ canvas.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;const p=pointAt(e);pointers.set(e.pointerId,p);if(pointers.size>=2&&gesture){const a=[...pointers.values()],mid={x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2},ratio=dist(a[0],a[1])/(gesture.dist||1),world={x:(gesture.mid.x-gesture.ox)/gesture.scale,y:(gesture.oy-gesture.mid.y)/gesture.scale};scale=Math.max(1.5,Math.min(38000000,gesture.scale*ratio));ox=mid.x-world.x*scale;oy=mid.y+world.y*scale;draw();return}if(!drag)return;const w=toWorld(p.x,p.y);if(drag.kind==='pan'){ox=drag.ox+p.x-drag.x;oy=drag.oy+p.y-drag.y}else if(drag.kind==='vertex'){const q=snap(w);if(drag.owner.type==='point'){const old=drag.owner.p;moveShared(old,q)}else if(drag.owner.points){const old=drag.owner.points[drag.index];drag.owner.points[drag.index]=q;moveShared(old,q)}else{const old=drag.index===0?drag.owner.a:drag.owner.b;if(drag.index===0)drag.owner.a=q;else drag.owner.b=q;moveShared(old,q)}}else if(drag.kind==='shape'){const dx=Math.round(w.x-drag.start.x),dy=Math.round(w.y-drag.start.y);if(drag.owner.points){const moved=drag.orig.map(q=>({x:q.x+dx,y:q.y+dy}));drag.orig.forEach((old,i)=>moveShared(old,moved[i]));drag.owner.points=moved}else if(drag.owner.a){const na={x:drag.origA.x+dx,y:drag.origA.y+dy},nb={x:drag.origB.x+dx,y:drag.origB.y+dy};moveShared(drag.origA,na);moveShared(drag.origB,nb);drag.owner.a=na;drag.owner.b=nb}}draw()});
+ function end(e){pointers.delete(e.pointerId);if(pointers.size<2)gesture=null;if(!pointers.size){drag=null;if(selected)showInfo(selected)}}canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);
+ const finish=document.createElement('button');finish.id='geoFinishPolygon';finish.type='button';finish.textContent='تمام چندضلعی';finish.hidden=true;finish.onclick=()=>{if(poly.length>=3){snapshot();const o={type:'polygon',points:poly.map(p=>({...p})),closed:true,names:poly.map((_,i)=>letter(i))};objects.push(o);selected=o;poly=[];draw();showInfo(o)}else $('geoHelp').textContent='برای چندضلعی دست‌کم سه رأس لازم است.'};document.querySelector('.geoFoot').insertBefore(finish,$('geoZoomOut'));
+ function showInfo(o){const el=$('geoInfo');if(!o){el.textContent='یک نقطه یا شکل را انتخاب کن.';return}const f=n=>Number(n.toFixed(2)),co=p=>`(${f(p.x)}, ${f(p.y)})`,d=(a,b)=>dist(a,b);let title=o.type==='point'?`نقطهٔ ${o.name}`:({line:'خط راست',dashedline:'خط‌چین',ray:'نیم‌خط',segment:'پاره‌خط',polygon:'چندضلعی',triangle:'مثلث',square:'مربع',rectangle:'مستطیل',circle:'دایره',semicircle:'نیم‌دایره',ellipse:'بیضی',regular:'چندضلعی منتظم',angle:'زاویه'})[o.type]||o.type;let bits=[];const addbit=(k,v)=>bits.push(`<span class="infoRow"><b>${k}:</b> ${v}</span>`);if(o.type==='point')addbit('مختصات',co(o.p));else{const ps=o.points||((o.a&&o.b)?[o.a,o.b]:[]);ps.forEach((p,i)=>addbit(o.names?.[i]||nameAt(p)||letter(i),co(p)));if(['polygon','triangle','square','rectangle','regular'].includes(o.type)&&ps.length>=3){let per=0,ar=0;for(let i=0;i<ps.length;i++){const a=ps[i],b=ps[(i+1)%ps.length];per+=d(a,b);ar+=a.x*b.y-b.x*a.y}addbit('محیط',f(per)+' واحد');addbit('مساحت',f(Math.abs(ar/2))+' واحد مربع');if(ps.length===3){for(let i=0;i<3;i++){const a=ps[i],b=ps[(i+1)%3],c=ps[(i+2)%3],u={x:a.x-b.x,y:a.y-b.y},v={x:c.x-b.x,y:c.y-b.y},ang=Math.acos(Math.max(-1,Math.min(1,(u.x*v.x+u.y*v.y)/(d(a,b)*d(c,b)||1))))*180/Math.PI;addbit('زاویهٔ '+letter(i),f(ang)+'°')}}}if(o.type==='angle'&&ps.length===3){const a=ps[0],b=ps[1],c=ps[2],u={x:a.x-b.x,y:a.y-b.y},v={x:c.x-b.x,y:c.y-b.y},ang=Math.acos(Math.max(-1,Math.min(1,(u.x*v.x+u.y*v.y)/(d(a,b)*d(c,b)||1))))*180/Math.PI;addbit('نوع زاویه',ang<90-1e-6?'تند':Math.abs(ang-90)<1e-6?'قائمه':ang<180?'باز':'مستقیم')}
+  if(['line','dashedline','ray','segment'].includes(o.type))addbit('فاصلهٔ دو نقطه',f(d(o.a,o.b))+' واحد');if(['circle','semicircle','ellipse'].includes(o.type)){const rx=Math.abs(o.b.x-o.a.x),ry=Math.abs(o.b.y-o.a.y);if(o.type==='circle'){const r=d(o.a,o.b);addbit('شعاع',f(r)+' واحد');addbit('محیط',f(2*Math.PI*r)+' واحد');addbit('مساحت',f(Math.PI*r*r)+' واحد مربع')}else addbit('مساحت تقریبی',f(Math.PI*rx*ry)+' واحد مربع')}}el.innerHTML='<span class="infoTitle">'+title+'</span><div class="infoGroup">'+bits.join('')+'</div>'+
+   ((o.type==='point'||o.points||o.a&&o.b)?'<div style="font-weight:800;margin-top:8px">ویرایش دقیق مختصات نقاط</div><div class="geoEdit">'+(o.type==='point'?[o.p]:o.points||[o.a,o.b]).map((p,i)=>'<label>نقطه '+(o.names?.[i]||letter(i))+' — x<input type="number" step="0.1" data-vertex="'+i+'" data-axis="x" value="'+f(p.x)+'"></label><label>y<input type="number" step="0.1" data-vertex="'+i+'" data-axis="y" value="'+f(p.y)+'"></label>').join('')+'<button type="button" id="geoApplyCoords">اعمال مختصات</button></div>':'')+
+   (o.type==='angle'?'<div class="cap">نوع زاویه با اندازهٔ آن مشخص می‌شود: تند کمتر از ۹۰°، قائمه ۹۰°، باز بین ۹۰° و ۱۸۰°، مستقیم ۱۸۰°.</div>':'') }
+ window.addEventListener('resize',()=>{if(!panel.hidden)resize()});resize();
+ window.GEO={get o(){return objects},set o(v){objects=v},snap:snapshot,draw,info:showInfo,nn:()=>{let n;do n=letter(nextName++);while(objects.some(o=>o.name===n||o.label===n));return n},sel:o=>{selected=o}};
+})();
+
+/* ---------- background ---------- */
+(function(){const c=$('bg'),x=c.getContext('2d');if(!x)return;const PR=[2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97];let W,H,P=[];
+  const rs=()=>{const d=devicePixelRatio||1;W=innerWidth;H=innerHeight;c.width=W*d;c.height=H*d;x.setTransform(d,0,0,d,0,0);P=Array.from({length:Math.min(30,Math.floor(W*H/20000))},()=>({x:Math.random()*W,y:Math.random()*H,v:.15+Math.random()*.35,n:PR[Math.random()*PR.length|0],s:14+Math.random()*28}))};
+  const rm=matchMedia('(prefers-reduced-motion:reduce)');
+  function draw(){x.clearRect(0,0,W,H);x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--pr').trim()||'#c98100';x.globalAlpha=.11;
+    for(const p of P){x.font='800 '+p.s+'px Vazirmatn,sans-serif';x.fillText(p.n,p.x,p.y);if(!rm.matches){p.y-=p.v;if(p.y<-40){p.y=H+40;p.x=Math.random()*W}}}
+    if(!rm.matches)requestAnimationFrame(draw)}
+  rs();draw();addEventListener('resize',()=>{rs();if(rm.matches)draw()})})();
+/* ---------- ui ---------- */
+$('th').onclick=()=>{const r=document.documentElement,dk=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=dk?'light':'dark'};
+function welcome(){const h=new Date().getHours(),g=h<5?'شب بخیر 🌙':h<11?'صبح بخیر ☀️':h<17?'ظهر بخیر 🌤️':h<20?'عصر بخیر 🌇':'شب بخیر 🌙',nm=ls.get('nsh-name'),F=['عدد ۱ نه اول است و نه مرکب!','مجموع زاویه‌های هر مثلث همیشه ۱۸۰ درجه است، حتی یک مثلث غول‌پیکر.','صدا در هوا حدود ۳۴۰ متر بر ثانیه می‌رود، ولی نور حدود ۳۰۰ میلیون! ⚡','عدد ۲ تنها عدد اول زوج است.','برای تبدیل m/s به km/h در ۳٫۶ ضرب کن.','در یک n‌ضلعی، تعداد قطرها n(n−3)/2 است.','اگر سطح تماس را کم کنی، فشار زیاد می‌شود؛ برای همین چاقو می‌برد 🔪'];
+say('<b>'+g+(nm?' '+nm:'')+'! من NSH.bot هستم 🤖</b><br>معلم خصوصی ریاضی و فیزیک هشتم؛ درس می‌دهم، مسئله حل می‌کنم، شکل می‌کشم و اگر خسته شدی کنارت هستم 💙<div class="tp" style="margin-top:8px"><b>💡 نکتهٔ امروز</b><div class="fx" style="display:block">'+F[Math.floor(Math.random()*F.length)]+'</div></div>از کجا شروع کنیم؟ بنویس «هندسه»، «جبر»، «فیزیک» یا «تمرین ساده» 🙂 و اگر چیزی را می‌خواهی به من یاد بدهی، بنویس «یاد بگیر: …»<div class="tags"><button class="chip" data-q="هندسه">📐 هندسه</button><button class="chip" data-q="جبر">🧮 جبر</button><button class="chip" data-q="فیزیک">⚡ فیزیک</button><button class="chip" data-q="تمرین ساده">✏️ تمرین</button><button class="chip" data-q="جوک ریاضی">😄 جوک</button></div>',300)}
+let started=false;
+function startApp(){if(started)return;started=true;$('sp').classList.add('out');setTimeout(welcome,450)}
+$('sh').innerHTML=[...'NSH.bot'].map((c,i)=>'<span style="animation-delay:'+(300+i*90)+'ms">'+c+'</span>').join('');
+['در حال روشن‌کردن مغز ریاضی… 🧠','تیز کردن مدادها ✏️','شمردن اعداد اول 🔢','آماده‌ایم! بزن بریم 🚀'].forEach((p,i)=>setTimeout(()=>{$('ss').textContent=p},i*800));
+$('sp').onclick=startApp;setTimeout(startApp,3300);
+$('cb').onclick=()=>{if(mode!=='chat')return;add('','me','چالش');challenge()};
+document.addEventListener('contextmenu',e=>{const t=e.target;if(!(t&&t.closest&&t.closest('input')))e.preventDefault()});
+document.addEventListener('copy',e=>{const t=e.target;if(!(t&&t.closest&&t.closest('input')))e.preventDefault()});
+document.addEventListener('keydown',e=>{const k=(e.key||'').toLowerCase(),c=e.ctrlKey||e.metaKey;if(k==='f12'||(c&&['u','s','p'].includes(k))||(c&&e.shiftKey&&['i','j','c'].includes(k)))e.preventDefault()});
+</script>
+<script>
+/* ---------- grade 8 knowledge ---------- */
+const T=[
+['استدلال در هندسه','استدلال|فرض و حکم|مثال نقض','g','فرض::آنچه معلوم است~حکم::آنچه باید ثابت شود~اثبات::با دلیل از فرض به حکم می‌رسیم~مثال نقض::یک نمونهٔ غلط، ادعا را رد می‌کند','«هر عدد اول فرد است» با مثال نقض ۲ رد می‌شود.'],
+['زاویه‌های مثلث','مجموع زاویه|زاویه.{0,6}مثلث|خارجی','g','مجموع زاویه‌های داخلی::180°~زاویهٔ خارجی::مجموع دو زاویهٔ داخلی غیرمجاور~مجموع زاویه‌های خارجی::360°','زاویه‌های 50° و 60° ← زاویهٔ سوم 70° و خارجی مقابلش 110° است.'],
+['خطوط موازی و مورب','مورب|موازی|متناظر|متبادل','g','متناظر::مساوی‌اند~متبادل داخلی::مساوی‌اند~داخلی هم‌طرف::مجموع 180°~عکس قضیه::با این زاویه‌ها خطوط موازی‌اند','اگر یک زاویهٔ متناظر 70° باشد، دیگری هم 70° است.'],
+['زاویه‌ها و رابطه‌هایشان','متقابل|مجاور|متمم|مکمل|نیمساز|زاویه','g','متقابل به رأس::مساوی‌اند~مجاور روی خط (مکمل)::مجموع 180°~متمم::مجموع 90°~نیمساز::زاویه را نصف می‌کند','زاویهٔ 65°: مکملش 115° و متممش 25° است.'],
+['چندضلعی‌ها','چندضلعی|قطر|منتظم|پنج.?ضلعی|شش.?ضلعی','g','مجموع زاویه‌های داخلی::(n−2)×180°~تعداد قطرها::n(n−3)/2~هر زاویهٔ منتظم::(n−2)×180°/n~مجموع زاویه‌های خارجی::360°','شش‌ضلعی: (6−2)×180 = 720° و 9 قطر دارد.'],
+['نابرابری مثلث','نابرابری','g','قاعده::هر ضلع از مجموع دو ضلع دیگر کوچک‌تر است~و::از تفاضل آن‌ها بزرگ‌تر است~روش::دو ضلع کوچک را جمع کن و با ضلع بزرگ مقایسه کن','با 3 و 4 و 8 مثلث نمی‌شود، چون 3+4 < 8.'],
+['هم‌نهشتی مثلث‌ها','هم.?نهشت','g','ض‌ض‌ض::سه ضلع برابر~ض‌ز‌ض::دو ضلع و زاویهٔ بین آن‌ها~ز‌ض‌ز::دو زاویه و ضلع بین آن‌ها~قائم‌الزاویه::وتر و یک ضلع~ض‌ض‌ز غیرمحصور::کافی نیست','AB=DE و BC=EF و ∠B=∠E ← هم‌نهشت (ض‌ز‌ض).'],
+['مثلث متساوی‌الساقین و متساوی‌الاضلاع','متساوی|ساقین','g','ساقین::زاویه‌های مقابل ساق‌ها مساوی‌اند~در ساقین::نیمساز، میانه و ارتفاع قاعده یکی‌اند~متساوی‌الاضلاع::هر زاویه 60°','ساقین با زاویهٔ رأس 40°: زاویه‌های قاعده هرکدام 70°.'],
+['قضیهٔ فیثاغورس','فیثاغورس|وتر','g','قائم‌الزاویه::a² + b² = c²~عکس::اگر برقرار باشد مثلث قائم‌الزاویه است~سه‌تایی‌ها::3-4-5 و 5-12-13 و 8-15-17','ضلع‌های 6 و 8 ← وتر = √100 = 10.'],
+['مساحت و محیط','مساحت|محیط|ذوزنقه|لوزی|متوازی','g','مستطیل::طول × عرض~متوازی‌الاضلاع::قاعده × ارتفاع~مثلث::قاعده × ارتفاع ÷ 2~لوزی::قطر۱ × قطر۲ ÷ 2~ذوزنقه::(a + b) × h ÷ 2','ذوزنقه با قاعده‌های 6 و 10 و ارتفاع 4: مساحت 32.'],
+['تبدیل‌ها و تقارن','تبدیل|انتقال|بازتاب|دوران|تقارن','g','انتقال::جابه‌جایی بدون چرخش~بازتاب::قرینه نسبت به یک خط~دوران::چرخش حول یک نقطه~ویژگی::طول و زاویه تغییر نمی‌کند','قرینهٔ (2, 3) نسبت به محور x‌ها (2, −3) است.'],
+['عناصر مثلث (ارتفاع، میانه)','ارتفاع|میانه|ثقل|عمودمنصف|مثلث','g','ارتفاع::عمود از رأس بر ضلع مقابل~میانه::رأس را به وسط ضلع مقابل وصل می‌کند~مرکز ثقل::برخورد میانه‌هاست~عمودمنصف::عمود بر وسط ضلع','برای حل عددی بنویس «مثلث 3 4» یا «مثلث 5 6 7».'],
+['عبارت جبری و هم‌جمله‌ها','عبارت|هم.?جمله|ضریب|جمله','a','جمله::مثل 3x² یا −5~ضریب::عدد کنار متغیر~هم‌جمله::متغیر و توان یکسان دارند~جمع::فقط ضریب‌ها جمع می‌شوند','3x + 5x − 2x = 6x'],
+['ضرب و توزیع‌پذیری','توزیع|ضرب|فاکتور|پرانتز','a','قاعده::a(b + c) = ab + ac~تک‌جمله در چندجمله::هر جمله را ضرب کن~چندجمله در چندجمله::هر جمله در هر جمله','2x(x + 3) = 2x² + 6x'],
+['اتحادها','اتحاد|مربع دو جمله|مزدوج','a','مربع مجموع::(a + b)² = a² + 2ab + b²~مربع تفاضل::(a − b)² = a² − 2ab + b²~مزدوج::(a + b)(a − b) = a² − b²~جملهٔ مشترک::(x + a)(x + b) = x² + (a+b)x + ab','(x + 3)² = x² + 6x + 9'],
+['معادلهٔ درجه اول','معادله|حل کن|ترازو','a','ایده::هر کاری روی یک طرف، همان روی طرف دیگر~مراحل::پرانتز ← x ها یک طرف ← عددها طرف دیگر ← تقسیم بر ضریب~بررسی::جواب را جایگذاری کن','برای حل مستقیم بنویس «2x+3=11» یا «3(x−1)=2x+5».'],
+['مسئلهٔ کلامی','مسئله|کلامی','a','گام ۱::مجهول را x بگذار~گام ۲::جمله‌ها را به معادله ترجمه کن~گام ۳::حل کن و در مسئله بررسی کن','«سه برابر عددی با ۴ جمع شود، ۱۹ می‌شود» ← 3x + 4 = 19 ← x = 5.'],
+['توان و جذر','توان|جذر|ریشه|نماد علمی','a','ضرب هم‌پایه::a^m × a^n = a^(m+n)~تقسیم::a^m ÷ a^n = a^(m−n)~توان توان::(a^m)^n = a^(m×n)~توان صفر::a^0 = 1~نماد علمی::a × 10^n , 1 ≤ a < 10','2^3 × 2^4 = 2^7 = 128'],
+['عددهای صحیح و گویا','گویا|صحیح|کسر|علامت','a','ضرب و تقسیم::هم‌علامت مثبت، غیرهم‌علامت منفی~جمع کسر::مخرج مشترک بگیر~تقسیم کسر::ضرب در وارونهٔ کسر دوم','(−3)×(−4) = 12 و 1/2 + 1/3 = 5/6'],
+['عددهای اول و ب.م.م','بخش.?پذیری|ب.م.م|ک.م.م|مضرب|عاد','a','عدد اول::فقط دو مقسوم‌علیه ۱ و خودش دارد~تجزیه::هر عدد مرکب حاصل‌ضرب اول‌هاست~ب.م.م::بزرگ‌ترین مقسوم‌علیه مشترک (عامل‌های مشترک با کم‌ترین توان)~ک.م.م::کوچک‌ترین مضرب مشترک (همهٔ عامل‌ها با بیشترین توان)~رابطه::ب.م.م × ک.م.م = حاصل‌ضرب دو عدد','12 = 2²×3 و 18 = 2×3² ← ب.م.م = 6 و ک.م.م = 36. برای حل بنویس «ب.م.م 12 18».'],
+['الگوهای عددی','الگو|دنباله|جملهٔ عمومی|جمله عمومی','a','الگوی خطی::جمله‌ها با اختلاف ثابت d زیاد می‌شوند~جملهٔ عمومی::a_n = a₁ + (n−1)d~مربعی::۱، ۴، ۹، ۱۶ ← n²~مثلثی::۱، ۳، ۶، ۱۰ ← n(n+1)/2','الگوی 3، 7، 11، … : d = 4 و جملهٔ n ام = 4n − 1 است.'],
+['بردار و مختصات','بردار|مختصات|محور|صفحهٔ مختصات|صفحه مختصات','g','نقطه::(x, y) با طول و عرض~بردار::جابه‌جایی با اندازه و جهت؛ از A تا B: (x_B−x_A , y_B−y_A)~انتقال::هر نقطه با بردار (a,b) به (x+a , y+b) می‌رود~جمع بردارها::مؤلفه‌ها جدا جمع می‌شوند~فاصله::√((x₂−x₁)² + (y₂−y₁)²)','A(1,2) و B(4,6) ← بردار AB = (3,4) و طول آن 5 است. در کارگاه هندسه بنویس Translate(A,B,C).'],
+['آمار و احتمال','آمار|احتمال|میانگین|نمودار|داده|پیشامد|فضای نمونه','a','میانگین::مجموع دادهها ÷ تعداد~میانه::دادهٔ وسط پس از مرتب‌کردن~مد::دادهٔ پرتکرار~دامنهٔ تغییرات::بزرگ‌ترین − کوچک‌ترین~احتمال::تعداد حالت‌های مطلوب ÷ تعداد کل حالت‌ها (بین ۰ و ۱)','داده‌های 2، 4، 4، 6، 9: میانگین 5، میانه 4، مد 4. احتمال شمارهٔ زوج در تاس = 3/6 = 1/2.'],
+['حجم و مساحت جانبی','حجم|منشور|استوانه|مساحت جانبی|هرم','g','حجم منشور::مساحت قاعده × ارتفاع~مساحت جانبی منشور::محیط قاعده × ارتفاع~استوانه::حجم = πr²h و مساحت جانبی = 2πrh~مساحت کل::مساحت جانبی + دو قاعده~هرم::حجم = ⅓ × مساحت قاعده × ارتفاع','استوانه با r=3 و h=10: حجم 90π ≈ 282.7 و مساحت جانبی 60π ≈ 188.5 است.'],
+['حرکت و سرعت','حرکت|سرعت|تندی|شتاب|مسافت|جابه.?جایی','p','سرعت متوسط::مسافت ÷ زمان (v = d/t)~یکا::m/s و km/h؛ برای تبدیل m/s را در 3.6 ضرب کن~شتاب::تغییر سرعت ÷ زمان (a = Δv/t)~حرکت یکنواخت::سرعت ثابت؛ نمودار مکان-زمان خط راست است','دونده‌ای 100 متر را در 20 ثانیه می‌دود: v = 5 m/s = 18 km/h. بنویس «سرعت 100 20».'],
+['نیرو و قانون‌های نیوتن','نیرو|نیوتن|اصطکاک|وزن|جرم|لختی','p','قانون اول::جسم بدون نیروی خالص، حالتش (سکون یا حرکت یکنواخت) را حفظ می‌کند؛ این همان لختی است~قانون دوم::F = m a~قانون سوم::هر کنش یک واکنش برابر و در جهت مخالف دارد~وزن::W = m g با g ≈ 10 N/kg~اصطکاک::نیرویی مخالف حرکت میان دو سطح','جرم 5 kg و شتاب 2 m/s² ← F = 10 N. بنویس «نیرو 5 2».'],
+['فشار و چگالی','فشار|چگالی|پاسکال|ارشمیدس|شناوری|مایع','p','فشار::P = F/A با یکای پاسکال (Pa)~فشار مایع::P = ρ g h؛ با عمق زیاد می‌شود~چگالی::ρ = m/V~شناوری::اگر چگالی جسم از مایع کمتر باشد، شناور می‌ماند~ارشمیدس::نیروی بالابرنده برابر وزن مایع جابه‌جاشده است','نیروی 100 N روی سطح 0.5 m² ← فشار 200 Pa. بنویس «فشار 100 0.5».'],
+['کار، انرژی و توان','انرژی|کار و|توان|جنبشی|پتانسیل|پایستگی','p','کار::W = F d (ژول)~انرژی جنبشی::½ m v²~انرژی پتانسیل::m g h~پایستگی انرژی::انرژی ساخته یا نابود نمی‌شود، فقط تبدیل می‌شود~توان::P = W/t (وات)','بالا بردن 2 kg تا ارتفاع 3 m: انرژی پتانسیل = 2×10×3 = 60 J.'],
+['گرما و دما','گرما|دما|ظرفیت گرمایی|گرمای ویژه|انبساط|رسانش|همرفت','p','دما و گرما::دما میزان داغی است؛ گرما انرژی منتقل‌شده~روش‌های انتقال::رسانش، همرفت، تابش~انبساط::بیشتر مواد با گرم‌شدن منبسط می‌شوند~گرمای لازم::Q = m c Δθ','گرم‌کردن 2 kg آب به اندازهٔ 10°C: Q = 2×4200×10 = 84000 J. بنویس «گرما 2 4200 10».'],
+['نور و بازتاب','نور|آینه|عدسی|شکست|بازتاب نور|سایه','p','انتشار::نور در خط راست و در محیط یکنواخت حرکت می‌کند~بازتاب::زاویهٔ تابش = زاویهٔ بازتاب~آینهٔ تخت::تصویر مجازی، هم‌اندازه و قرینه~شکست::تغییر مسیر نور هنگام ورود به محیط دیگر~عدسی::همگرا نور را جمع و واگرا پخش می‌کند','اگر زاویهٔ تابش 30° باشد، زاویهٔ بازتاب هم 30° است.'],
+['الکتریسیته','الکتریسیته|جریان|مدار|مقاومت|ولتاژ|بار الکتریکی','p','بار::مثبت و منفی؛ هم‌نام‌ها همدیگر را می‌رانند~جریان::شارش بار (آمپر)~ولتاژ::انرژی هر بار (ولت)~قانون اهم::V = I R~مدار::سری یک مسیر، موازی چند مسیر دارد','جریان 2 A و مقاومت 5 Ω ← ولتاژ 10 V. بنویس «ولتاژ 2 5».'],
+['صوت و موج','صوت|صدا|موج|بسامد|طول موج|پژواک','p','صوت::موج مکانیکی است و به محیط مادی نیاز دارد~بسامد::تعداد نوسان در ثانیه (هرتز)~تندی صوت::حدود 340 m/s در هوا~پژواک::بازتاب صدا؛ فاصله = ½ × سرعت × زمان','پژواک بعد از 2 ثانیه: فاصله = ½ × 340 × 2 = 340 m.']
+];
+
+const PH=1;function phys(z){const n=(z.match(/-?\d+(?:\.\d+)?/g)||[]).map(Number);if(n.length<2)return null;const[a,b,c]=n,r=x=>+x.toFixed(4),B=(t,f,v,u,tip)=>'<div class="tp"><b>'+t+'</b><div class="fx">'+row('فرمول',NS(f))+row('جای‌گذاری',NS(v))+row('جواب',NS(u))+'</div><div class="cap">'+tip+'</div></div>';
+if(/انرژی جنبشی/.test(z))return B('انرژی جنبشی','E = ½ m v²','½ × '+a+' × '+b+'²',r(a*b*b/2)+' J','جرم بر حسب kg و سرعت بر حسب m/s است. ورودی را به ترتیب «جرم، سرعت» بنویس.');
+if(/سرعت/.test(z)&&b)return B('سرعت متوسط','v = d / t',a+' ÷ '+b,r(a/b)+' m/s = '+r(a/b*3.6)+' km/h','ورودی به ترتیب «مسافت (متر)، زمان (ثانیه)» است.');
+if(/شتاب/.test(z)&&b)return B('شتاب متوسط','a = Δv / t',a+' ÷ '+b,r(a/b)+' m/s²','ورودی: «تغییر سرعت، زمان».');
+if(/نیرو/.test(z))return B('قانون دوم نیوتن','F = m a',a+' × '+b,r(a*b)+' N','ورودی: «جرم (kg)، شتاب (m/s²)».');
+if(/فشار/.test(z)&&b)return B('فشار','P = F / A',a+' ÷ '+b,r(a/b)+' Pa','ورودی: «نیرو (N)، سطح (m²)». هرچه سطح کمتر، فشار بیشتر!');
+if(/چگالی/.test(z)&&b)return B('چگالی','ρ = m / V',a+' ÷ '+b,r(a/b),'ورودی: «جرم، حجم». آب 1 g/cm³ است.');
+if(/توان/.test(z)&&b)return B('توان','P = W / t',a+' ÷ '+b,r(a/b)+' W','ورودی: «کار (J)، زمان (s)».');
+if(/کار/.test(z))return B('کار','W = F × d',a+' × '+b,r(a*b)+' J','ورودی: «نیرو (N)، جابه‌جایی (m)» در راستای نیرو.');
+if(/گرما|گرمایی/.test(z)&&c!==undefined)return B('گرمای لازم','Q = m c Δθ',a+' × '+b+' × '+c,r(a*b*c)+' J','ورودی: «جرم (kg)، گرمای ویژه (J/kg·°C)، تغییر دما». برای آب c ≈ 4200.');
+if(/ولتاژ|مقاومت|جریان/.test(z))return B('قانون اهم','V = I R',a+' × '+b,r(a*b)+' V','ورودی: «جریان (A)، مقاومت (Ω)».');
+return null}
+const CP=[];let need=null;
+const rowsOf=o=>o[3].split('~').map(r=>{const[l,v]=r.split('::');return row(l,/[\u0600-\u06FF]/.test(v)?v:NS(v))}).join('');
+const card=o=>'<div class="tp"><b>'+o[0]+'</b> <span class="cap">('+({g:'هندسه',a:'جبر',p:'فیزیک'}[o[2]])+' هشتم)</span><div class="fx">'+rowsOf(o)+'</div><div style="margin:6px 0">مثال: '+o[4]+'</div><div class="tags"><button class="chip" data-q="توضیح '+o[0]+'">🗣 توضیح ساده‌تر</button></div></div>';
+function expl(o){const tx='سلام! می‌خواهم «'+o[0]+'» را ساده برایت توضیح بدهم 🙂\n'+o[3].split('~').map((r,i)=>fa(i+1)+') '+r.replace('::',': ')).join('\n')+'\nمثال: '+o[4]+'\nحالا خودت یک مثال مشابه حل کن تا مطمئن شوم یاد گرفتی!';CP.push(tx);
+  return '<div style="white-space:pre-wrap">'+tx+'</div><div class="tags"><button class="chip" data-cp="'+(CP.length-1)+'">📋 کپی</button></div>'}
+function menu(g,a,ex){const ch=(k,ti)=>'<div class="cap" style="margin-top:6px">'+ti+'</div><div class="tags keep">'+T.filter(o=>o[2]===k).map(o=>'<button class="chip" data-q="'+(ex?'توضیح ':'')+o[0]+'">'+o[0]+'</button>').join('')+'</div>';
+  return (ex?'کدام مبحث را برای دیگران توضیح بدهم؟':'یک مبحث را انتخاب کن:')+(g?ch('g','📐 هندسهٔ هشتم'):'')+(a?ch('a','🧮 جبر هشتم'):'')+(window.PH?ch('p','⚡ فیزیک هشتم'):'')}
+async function extra(w){
+  const z=w.replace(/\u200c/g,'');const cc=window.chat&&chat(z);if(cc){await say(cc,380);return true}const c2=window.calc2&&calc2(z);if(c2){await say(c2,300);return true}const pc=phys(z);if(pc){await say(pc,250);return true}
+  if(/(?:فصل\s*[۴4]|فصل\s*چهارم|جبر و معادله)/.test(z)&&/(?:ریاضی|هشتم|فصل|جبر|معادله)/.test(z)){
+    const lesson='<div class="tp"><b>فصل ۴ ریاضی هشتم: جبر و معادله</b><div class="cap">این فصل چهار درس اصلی دارد: ساده‌کردن عبارت‌های جبری، پیدا کردن مقدار عددی، تجزیهٔ عبارت‌ها و معادله.</div>'+
+    '<b>۱) عبارت جبری و جمله‌های متشابه</b><div class="fx">عبارت جبری ترکیبی از عدد، حرف و عمل‌های ریاضی است؛ مثل 3x+2y−5. در 7x، عدد 7 ضریب و x متغیر است. جمله‌های متشابه قسمت حرفی و توان‌های یکسان دارند؛ مثلاً 3x و −5x متشابه‌اند، ولی x و x² متشابه نیستند. فقط ضریب جمله‌های متشابه را جمع یا کم می‌کنیم: 4x+3x−2x=5x. همچنین 2a+3b+a−b=3a+2b.</div>'+
+    '<b>۲) ساده‌کردن و خاصیت توزیع‌پذیری</b><div class="fx">پرانتز را با ضرب هر جمله باز کن: a(b+c)=ab+ac و a(b−c)=ab−ac. مثال: 3(2x−4)+x=6x−12+x=7x−12. ضرب دو پرانتز: (x+2)(x+3)=x²+3x+2x+6=x²+5x+6. علامت‌ها را با دقت پخش کن: −2(x−3)=−2x+6.</div>'+
+    '<b>۳) پیدا کردن مقدار عددی عبارت</b><div class="fx">به‌جای هر حرف، عدد داده‌شده را جای‌گذاری کن و طبق ترتیب عمل‌ها حساب کن. مثال: اگر x=−2 باشد، مقدار 3x²−2x+1 برابر است با 3×(−2)²−2×(−2)+1=12+4+1=17. دقت کن که (−2)²=4، نه −4.</div>'+
+    '<b>۴) تجزیهٔ عبارت جبری</b><div class="fx">تجزیه یعنی تبدیل جمع یا تفریق به ضرب. اول عامل مشترک را پیدا کن و بیرون پرانتز بگذار: 6x+9=3(2x+3)، چون 3 عامل مشترک است. مثال دیگر: 4a²−8a=4a(a−2). برای بررسی، پرانتز را دوباره باز کن؛ باید عبارت اول به دست آید.</div>'+
+    '<b>۵) معادله و حل آن</b><div class="fx">معادله تساوی‌ای است که مجهول دارد. هدف پیدا کردن عددی است که تساوی را درست کند. هر عمل را روی هر دو طرف تساوی انجام بده تا تعادل حفظ شود. مثال: 3x+5=20 ← 3x=15 ← x=5. بررسی: 3×5+5=20. مثال با پرانتز: 2(x−3)=10 ← x−3=5 ← x=8.</div>'+
+    '<b>۶) معادله در مسئله‌های کلامی</b><div class="fx">مجهول را x بگذار، جملهٔ مسئله را به رابطهٔ ریاضی تبدیل کن، معادله را حل کن و جواب را در متن بررسی کن. مثال: «سه برابر عددی، 4 واحد بیشتر از 17 است» یعنی 3x=17+4=21؛ پس x=7.</div>'+
+    '<b>نکته‌های امتحانی</b><div class="fx">• جمله‌های نامتشابه را جمع نکن: 2x+3y همان‌طور می‌ماند.<br>• توان را درست حساب کن: x² یعنی x×x.<br>• هنگام بازکردن پرانتز، علامت همهٔ جمله‌ها را در ضریب ضرب کن.<br>• در معادله، یک جمله را می‌توان با انجام عمل یکسان در دو طرف جابه‌جا کرد؛ علامت آن در روش کوتاه عوض می‌شود.<br>• جواب را با جای‌گذاری در معادلهٔ اصلی بررسی کن.</div>'+
+    '<b>تمرین برای یادگیری</b><div class="fx">۱) 5x−2x+4 را ساده کن.<br>۲) اگر a=3 باشد، مقدار 2a²−a را پیدا کن.<br>۳) عبارت 8x+12 را تجزیه کن.<br>۴) معادلهٔ 4x−7=13 را حل کن.<br>۵) دو برابر عددی به‌علاوهٔ 9 برابر 25 است؛ عدد را پیدا کن.</div><div class="cap">پاسخ کوتاه: ۱) 3x+4، ۲) 15، ۳) 4(2x+3)، ۴) x=5، ۵) x=8.</div></div>';
+    await say(lesson,250);return true;
+  }
+  if(/=/.test(z)&&/x/i.test(z)&&/^[\dx+\-*\/().=\s×÷−]+$/i.test(z)){await say(eqCard(z.replace(/[×⋅]/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/\s/g,'').replace(/X/g,'x')),300);return true}
+  const nd=!/\d/.test(z),ex=/توضیح|آموزش|یاد بده|یادم بده|برای (?:دوست|برادر|خواهر|داداش|همکلاسی)/.test(z),hit=nd&&T.find(o=>new RegExp(o[1]).test(z));
+  if(hit){window.LT=hit;if(hit[0][0]==='ع')need='مثلث';{const PN={'حرکت و سرعت':'سرعت','نیرو و قانون‌های نیوتن':'نیرو','فشار و چگالی':'فشار','کار، انرژی و توان':'کار','گرما و دما':'گرما','الکتریسیته':'ولتاژ'};if(PN[hit[0]])need=PN[hit[0]]}await say(ex?expl(hit):card(hit),250);return true}
+  const g=/هندسه/.test(z),a=/جبر/.test(z),ph=/فیزیک/.test(z);
+  if(nd&&ph){await say('فیزیک هشتم را دوست دارم! 🚀 هر مبحث را با فرمول و مثال می‌گویم، و می‌توانی مسئلهٔ عددی هم بدهی؛ مثلاً «سرعت 100 20».'+menu(false,false,ex).replace(/<div class="cap".*$/,'')+'<div class="tags keep">'+T.filter(o=>o[2]==='p').map(o=>'<button class="chip" data-q="'+(ex?'توضیح ':'')+o[0]+'">'+o[0]+'</button>').join('')+'</div>',250);return true}
+  if(nd&&(g||a||ex||/مباحث|فهرست|موضوعات/.test(z))){await say(menu(g||!a,a||!g,ex),250);return true}
+  return false}
+function linp(S){let i=0;const ex=m=>{throw{fa:m}},Z=RB(0n),ad=(r,s)=>RB(r.n*s.d+s.n*r.d,r.d*s.d),mu=(r,s)=>RB(r.n*s.n,r.d*s.d),P=(a,b)=>({a,b}),
+  ng=q=>P(RB(-q.a.n,q.a.d),RB(-q.b.n,q.b.d)),sm=(p,q)=>P(ad(p.a,q.a),ad(p.b,q.b)),
+  ml=(p,q)=>{if(p.a.n&&q.a.n)ex('معادله باید درجهٔ اول باشد (x² نداریم).');return P(ad(mu(p.a,q.b),mu(p.b,q.a)),mu(p.b,q.b))},
+  dv=(p,q)=>{if(q.a.n)ex('تقسیم بر x پشتیبانی نمی‌شود.');if(!q.b.n)ex('تقسیم بر صفر ممکن نیست.');const v=RB(q.b.d,q.b.n);return P(mu(p.a,v),mu(p.b,v))};
+  function expr(){let a=term();while(S[i]==='+'||S[i]==='-'){const o=S[i++],b=term();a=sm(a,o==='+'?b:ng(b))}return a}
+  function term(){let a=un();for(;;){const c=S[i];if(c==='*'||c==='/'){i++;const b=un();a=c==='*'?ml(a,b):dv(a,b)}else if(c==='x'||c==='(')a=ml(a,pf());else return a}}
+  function un(){if(S[i]==='-'){i++;return ng(un())}if(S[i]==='+'){i++;return un()}return pf()}
+  function pf(){if(S[i]==='('){i++;const a=expr();if(S[i]!==')')ex('پرانتز بسته نشده است.');i++;return a}if(S[i]==='x'){i++;return P(RB(1n),Z)}
+    const m=S.slice(i).match(/^(\d+)(?:\.(\d+))?/);if(!m)ex('عبارت را نفهمیدم.');i+=m[0].length;const f=m[2]||'';return P(Z,RB(BigInt(m[1]+f),10n**BigInt(f.length)))}
+  const r=expr();if(i<S.length)ex('عبارت را نفهمیدم.');return r}
+function eqCard(s){try{const q=s.split('=');if(q.length!==2||!q[0]||!q[1])throw{fa:'یک علامت = با دو طرف لازم است.'};
+  const L=linp(q[0]),R=linp(q[1]),f=r=>r.d===1n?String(r.n):r.n+'/'+r.d,sg=r=>r.n<0n?'−'+f(RB(-r.n,r.d)):f(r),
+  a=RB(L.a.n*R.a.d-R.a.n*L.a.d,L.a.d*R.a.d),b=RB(R.b.n*L.b.d-L.b.n*R.b.d,R.b.d*L.b.d);
+  if(!a.n)return '<div class="cap num">'+s+'</div>'+(b.n?'<span class="bad">این معادله جواب ندارد.</span>':'<span class="ok">همیشه درست است؛ بی‌شمار جواب دارد.</span>');
+  const x=RB(b.n*a.d,b.d*a.n),ev=(p,v)=>RB(p.a.n*v.n*p.b.d+p.b.n*p.a.d*v.d,p.a.d*v.d*p.b.d),lv=ev(L,x),rv=ev(R,x);
+  const rw=[row('x ها چپ، عددها راست',NS(sg(a)+'x = '+sg(b))),row('تقسیم بر ضریب',NS('x = '+sg(b)+' ÷ '+sg(a)+' = '+sg(x)))];
+  if(x.d!==1n)rw.push(row('اعشاری',dec(x)));rw.push(row('بررسی',NS(sg(lv)+' = '+sg(rv)+' ✓')));
+  return '<div class="cap num">'+s+'</div><div class="vd z"><div class="vn">'+NS('x = '+sg(x))+'</div><div class="vt">جواب</div></div><div class="fx">'+rw.join('')+'</div>'}
+  catch(e){return '<span class="bad">'+(e&&e.fa?e.fa:'نتوانستم معادله را حل کنم.')+'</span>\nمثال: <span class="num">2x+3=11</span>'}}
+/* ---------- consecutive messages + AI ---------- */
+const HIST=[];let AI=null;
+(async()=>{try{if(window.claude)AI=await claude.use('sample')}catch(e){}})();
+async function askAI(raw){if(!AI)return false;const t=add('<span class="dots"><span></span><span></span><span></span></span>','bot t');
+  const p='تو NSH.bot هستی، دستیار ریاضی دانش‌آموز پایهٔ هشتم (عدد اول، هندسه، جبر، مثلثات). پیام‌های پشت‌سرهم یک گفتگو هستند؛ ادامهٔ حرف قبلی را بفهم. فارسی ساده و کوتاه، فقط متن ساده بدون مارک‌داون.\nپیام‌های اخیر کاربر:\n'+HIST.map(h=>'- '+h.s).join('\n')+'\nبه همهٔ این پیام‌ها به‌صورت یک پرسش کامل پاسخ بده.';
+  try{await AI(p,{modelTier:'default',cache:false,onText:({text})=>{t.className='m bot ai';t.textContent=text;log.scrollTop=log.scrollHeight}})}catch(e){t.className='m bot';t.textContent=(e&&e.text)||'پاسخ هوشمند در دسترس نیست؛ «راهنما» را بزن.'}return true}
+async function handle(raw){
+  const now=Date.now(),pv=HIST[HIST.length-1];HIST.push({s:raw,t:now});if(HIST.length>8)HIST.shift();
+  {const q=window.quizCheck&&quizCheck(raw);if(q){await say(q,300);return}}{const mm=window.mind&&mind(raw);if(mm){await say(mm,520);return}}const nd=need;need=null;
+  if(nd&&pv&&now-pv.t<120000&&/^[\d\s.,۰-۹٠-٩]+$/.test(raw)&&(await handle0(nd+' '+raw))!==false)return;
+  if((await handle0(raw))!==false)return;
+  if(pv&&now-pv.t<90000&&/\d/.test(raw)&&!/\d/.test(pv.s)&&(await handle0(pv.s+' '+raw))!==false)return;
+  if(await askAI(raw))return;
+  await say(window.unknownReply?unknownReply(raw):'هنوز نمی‌دانم')}
+const go=async r=>{if(mode!=='chat')return;add('','me',r);try{await handle(r)}catch(err){say('خطا در پردازش. ورودی را بررسی کن.')}};
+log.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.chip');if(!b)return;
+  if(b.dataset.q)go(b.dataset.q);
+  else if(b.dataset.cp!==undefined){const s=CP[+b.dataset.cp];Promise.resolve().then(()=>navigator.share?navigator.share({text:s}):navigator.clipboard.writeText(s)).then(()=>{b.textContent='✓ انجام شد'}).catch(()=>{})}});
+/* ---------- math keyboard ---------- */
+(function(){const K=[['sin(','cos(','tan(','°','C','⌫'],['7','8','9','÷','(',')'],['4','5','6','×','^','√'],['1','2','3','−','π','x'],['0','.','=','+','%','↵']],kb=$('kb');
+  kb.innerHTML=K.map(r=>r.map(k=>'<button type="button" data-k="'+k+'">'+k.trim()+'</button>').join('')).join('');
+  kb.onclick=ev=>{const b=ev.target.closest('button');if(!b)return;const k=b.dataset.k,s=inp.selectionStart??inp.value.length,e2=inp.selectionEnd??s;
+    if(k==='C')inp.value='';else if(k==='↵')sendNow();
+    else if(k==='⌫'){if(s!==e2)inp.setRangeText('',s,e2,'end');else if(s>0)inp.setRangeText('',s-1,s,'end')}
+    else inp.setRangeText(k,s,e2,'end')};
+  $('kt').onclick=()=>{const on=kb.hidden;kb.hidden=!on;inp.inputMode=on?'none':'text';setTimeout(()=>{log.scrollTop=log.scrollHeight},60)}})();
+</script>
+<script>
+(function(){const G=window.GEO;if(!G)return;const $=i=>document.getElementById(i),O=()=>G.o;
+const pt=n=>{const o=O().find(o=>o.type==='point'&&o.name===n);return o&&o.p},ln=n=>{const o=O().find(o=>o.label===n&&o.a&&o.b&&o.type!=='point');return o&&[o.a,o.b]};
+const D=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),M=(a,b)=>({x:(a.x+b.x)/2,y:(a.y+b.y)/2}),U=(a,b)=>{const d=D(a,b)||1;return{x:(b.x-a.x)/d,y:(b.y-a.y)/d}},nr=l=>{const u=U(l[0],l[1]);return{x:-u.y,y:u.x}},ad=(p,v,k=1)=>({x:p.x+v.x*k,y:p.y+v.y*k});
+function ev(d){const R=d.a.map(n=>pt(n)||ln(n));if(R.some(x=>!x))return null;const n=d.n,r=Math.PI/180;switch(d.k){
+case'mid':return{p:M(R[0],R[1])};case'line':case'segment':case'ray':return{a:R[0],b:R[1]};
+case'perp':return{a:R[0],b:ad(R[0],nr(R[1]))};case'par':return{a:R[0],b:ad(R[0],U(R[1][0],R[1][1]))};
+case'pbis':{const m=M(R[0],R[1]);return{a:m,b:ad(m,nr(R))}}
+case'abis':{const u=U(R[1],R[0]),v=U(R[1],R[2]);return{a:R[1],b:ad(R[1],{x:u.x+v.x,y:u.y+v.y})}}
+case'int':{const p=R[0][0],q=R[1][0],a=U(...R[0]),b=U(...R[1]),de=a.x*b.y-a.y*b.x;if(Math.abs(de)<1e-12)return null;const t=((q.x-p.x)*b.y-(q.y-p.y)*b.x)/de;return{p:ad(p,a,t)}}
+case'refl':{const L=R[1],u=U(L[0],L[1]),t=(R[0].x-L[0].x)*u.x+(R[0].y-L[0].y)*u.y,f=ad(L[0],u,t);return{p:{x:2*f.x-R[0].x,y:2*f.y-R[0].y}}}
+case'rot':{const dx=R[0].x-R[1].x,dy=R[0].y-R[1].y,c=Math.cos(n*r),s=Math.sin(n*r);return{p:{x:R[1].x+dx*c-dy*s,y:R[1].y+dx*s+dy*c}}}
+case'dil':return{p:{x:R[1].x+(R[0].x-R[1].x)*n,y:R[1].y+(R[0].y-R[1].y)*n}};
+case'trans':return{p:{x:R[0].x+R[2].x-R[1].x,y:R[0].y+R[2].y-R[1].y}};
+case'circ':return{a:R[0],b:R[1]};case'circr':return{a:R[0],b:{x:R[0].x+n,y:R[0].y}};
+case'circ3':{const[A,B,C]=R,e=2*(A.x*(B.y-C.y)+B.x*(C.y-A.y)+C.x*(A.y-B.y));if(Math.abs(e)<1e-12)return null;const a=A.x*A.x+A.y*A.y,b=B.x*B.x+B.y*B.y,c=C.x*C.x+C.y*C.y,o={x:(a*(B.y-C.y)+b*(C.y-A.y)+c*(A.y-B.y))/e,y:(a*(C.x-B.x)+b*(A.x-C.x)+c*(B.x-A.x))/e};return{a:o,b:A}}
+case'poly':case'ang':return{points:R};}return null}
+const cl=v=>Array.isArray(v)?v.map(cl):v&&typeof v==='object'?{...v}:v;
+G.recalc=()=>O().forEach(o=>{if(o.dep){const r=ev(o.dep);if(r)Object.assign(o,Object.fromEntries(Object.entries(r).map(([k,v])=>[k,cl(v)])))}});
+const CM={midpoint:['mid','point'],segment:['segment','segment'],line:['line','line'],ray:['ray','ray'],perpendicularline:['perp','line'],parallelline:['par','line'],perpendicularbisector:['pbis','line'],angularbisector:['abis','line'],intersect:['int','point'],reflect:['refl','point'],rotate:['rot','point'],dilate:['dil','point'],translate:['trans','point'],polygon:['poly','polygon'],angle:['ang','angle'],circle:['circ','circle']};
+let cnt=0;const msg=t=>{$('geoHelp').textContent=t};
+function run(s){s=s.trim().replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[،٫]/g,',');if(!s)return;
+ const m=s.match(/^([A-Za-z]\w*)\s*=\s*(.+)$/),name=m?m[1]:null,body=m?m[2]:s;
+ if(name&&(pt(name)||O().some(o=>o.label===name)))return msg('این نام قبلاً استفاده شده است.');
+ let c=body.match(/^\(\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\)$/);
+ if(c){G.snap();const o={type:'point',p:{x:+c[1],y:+c[2]},name:name||G.nn(),cmd:s};O().push(o);return done(o)}
+ c=body.match(/^(\w+)\((.*)\)$/);const cm=c&&CM[c[1].toLowerCase()];if(!cm)return msg('دستور نامعتبر است. یکی از دکمه‌های دستور را بزن.');
+ const ar=c[2].split(',').map(x=>x.trim()).filter(Boolean),a=ar.filter(x=>isNaN(x)),nn=ar.find(x=>!isNaN(x)),n=nn===undefined?undefined:+nn;let k=cm[0],ty=cm[1];
+ if(k==='circ'){if(a.length===3)k='circ3';else if(n!==undefined)k='circr'}
+ if((k==='rot'||k==='dil')&&n===undefined)return msg('عدد (زاویه یا ضریب) را هم بنویس.');
+ if(k==='circr'&&!(n>0))return msg('شعاع باید مثبت باشد.');
+ const d={k,a,n},r=ev(d);if(!r)return msg('نام‌ها پیدا نشد یا ساخت ممکن نیست (مثلاً خط‌های موازی تقاطع ندارند).');
+ G.snap();const o={type:ty,dep:d,cmd:s,...Object.fromEntries(Object.entries(r).map(([k,v])=>[k,cl(v)]))};
+ if(ty==='point')o.name=name||G.nn();else{if(name||!['polygon','angle'].includes(ty)){let c;do c=String.fromCharCode(102+cnt++%20);while(O().some(x=>x.label===c||x.name===c));o.label=name||c}o.names=a.slice()}
+ O().push(o);done(o)}
+function done(o){G.sel(o);G.draw();G.info(o);$('geoCmd').value='';alg()}
+function alg(){const L=O(),f=n=>+n.toFixed(2);$('geoAlg').innerHTML=L.map((o,i)=>'<div><span>'+(o.type==='point'?o.name+' = ('+f(o.p.x)+', '+f(o.p.y)+')':(o.label||o.type)+(o.cmd?' : '+o.cmd.replace(/^\w+\s*=\s*/,''):' : '+o.type))+'</span><button data-del="'+i+'">✕</button></div>').join('')||'خالی';
+ $('geoNames').innerHTML=L.map(o=>o.type==='point'?o.name:o.label).filter(Boolean).map(n=>'<button class="nm" data-ins="'+n+'">'+n+'</button>').join('')}
+$('geoAlg').onclick=e=>{const i=e.target.dataset.del;if(i===undefined)return;G.snap();const o=O()[+i],nm=o.type==='point'?o.name:o.label;G.o=O().filter((x,j)=>j!==+i&&!(x.dep&&nm&&x.dep.a.includes(nm)));G.sel(null);G.draw();G.info(null);alg()};
+const inp=$('geoCmd'),cmds=[['نقطهٔ وسط','Midpoint('],['پاره‌خط','Segment('],['خط','Line('],['نیم‌خط','Ray('],['عمود','PerpendicularLine('],['موازی','ParallelLine('],['عمودمنصف','PerpendicularBisector('],['نیمساز','AngularBisector('],['تقاطع','Intersect('],['دایره','Circle('],['چندضلعی','Polygon('],['زاویه','Angle('],['بازتاب','Reflect('],['دوران','Rotate('],['بزرگ‌نمایی','Dilate('],['انتقال','Translate(']];
+$('geoCmds').innerHTML=cmds.map(c=>'<button data-ins="'+c[1]+'">'+c[0]+'</button>').join('');
+$('geoLet').innerHTML=[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].map(c=>'<button class="sy" data-ins="'+c+'">'+c+'</button>').join('');
+$('geoSyms').innerHTML=['(',')',',','=','.','-',0,1,2,3,4,5,6,7,8,9].map(c=>'<button class="sy" data-ins="'+c+'">'+c+'</button>').join('')+'<button class="sy" data-bs="1">⌫</button><button class="sy" data-ck="1">C</button>';
+$('geoCmdBar').addEventListener('click',e=>{const b=e.target;if(b.dataset.ins!==undefined){inp.value+=b.dataset.ins+(b.classList.contains('nm')?'':'')}else if(b.dataset.bs)inp.value=inp.value.slice(0,-1);else if(b.dataset.ck)inp.value=''});
+$('geoRun').onclick=()=>run(inp.value);inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();run(inp.value)}});
+$('geoCanvas').addEventListener('pointerup',()=>setTimeout(alg,0));['geoUndo','geoClear'].forEach(i=>$(i).addEventListener('click',()=>setTimeout(alg,0)));$('geoOpen').addEventListener('click',()=>setTimeout(alg,0));alg()})();
+</script>
+<script>
+(function(){const pick=a=>a[Math.floor(Math.random()*a.length)],R=n=>Math.floor(Math.random()*n),CH=t=>'<div class="tags">'+t.map(x=>'<button class="chip" data-q="'+x[1]+'">'+x[0]+'</button>').join('')+'</div>',AF=CH([['✏️ یک تمرین آسان','تمرین ساده'],['😄 یک جوک ریاضی','جوک ریاضی'],['🌱 انگیزه','انگیزه']]);
+const JK=['چرا کتاب ریاضی غمگین بود؟ چون کلی مسئله داشت! 😄','صفر به هشت گفت: کمربند قشنگی داری! 😄','مثلث‌ها چرا همیشه سه‌تایی می‌روند مهمانی؟ چون دو تا که نمی‌شود مثلث بود 😂','نیوتن زیر درخت نشسته بود، سیب افتاد؛ از آن روز همه‌چیز «سنگین» شد 🍎'],
+MT=['هر خطایی یک پله است، نه یک شکست 🪜','ریاضی عضله است: هرچه بیشتر تمرین کنی، قوی‌تر می‌شود 💪','بزرگ‌ترین دانشمندان هم اول مسئله‌ها را غلط حل می‌کردند 🌟','امروز فقط ۱۰ دقیقه؛ همین کافی است که شروع کنی ⏱️'];
+const EM=[[/خسته|بی ?حوصله|کلافه|خوابم/,'خسته‌ای؟ می‌فهمم، گاهی مغز هم باید نفس بکشد 💙 چند نفس عمیق بکش. اگر خواستی، فقط یک مرور کوتاه و آسان با هم می‌کنیم.'+AF],
+[/ناراحت|غمگین|دلم گرفته|گریه|افسرده/,'متأسفم که حالت خوب نیست 💙 حق داری. اگر دوست داری بگو چه شده؛ من گوش می‌دهم. اگر موضوع سنگینی است، حتماً با یکی از بزرگ‌ترها یا مشاور مدرسه هم حرف بزن، تنها نیستی.'+AF],
+[/استرس|اضطراب|نگران|می ?ترسم|ترسیدم|امتحان دارم|امتحان فردا/,'استرس قبل از امتحان طبیعی است و یعنی برایت مهم است 🌿 کار را کوچک کنیم: هر بار یک مبحث، با یک مثال. از کدام شروع کنیم؟<div class="tags"><button class="chip" data-q="هندسه">📐 هندسه</button><button class="chip" data-q="جبر">🧮 جبر</button><button class="chip" data-q="فیزیک">⚡ فیزیک</button></div>'],
+[/نمی ?فهمم|سخته|سخت ?[هش]|نمی ?تونم|نمی ?توانم|متنفرم از|ضعیفم|نمره بد/,'اشکالی ندارد؛ سخت‌بودن یعنی داری رشد می‌کنی 💪 هیچ‌کس همه‌چیز را یک‌باره یاد نمی‌گیرد. بگو دقیقاً کدام قسمت گنگ است تا از ساده‌ترین حالت با هم جلو برویم.'+AF],
+[/عصبانی|حرص|دعوا/,'عصبانی‌بودن هم حق توست 🌧️ یک مکث کوتاه کن و آب بخور. هر وقت آرام شدی، اگر خواستی دربارهٔ‌اش حرف بزن یا ذهنت را با یک تمرین سبک عوض کن.'+AF],
+[/خوشحال|عالی|هورا|قبول شدم|نمره خوب|بیست شدم|حل کردم/,'وای چه عالی! 🎉 به خودت افتخار کن، نتیجهٔ تلاش خودت است. یک چالش کمی سخت‌تر امتحان کنیم؟'+CH([['✏️ چالش بعدی','تمرین ساده']])],
+[/ممنون|مرسی|تشکر|دمت گرم|دستت درد نکنه/,'خواهش می‌کنم 😊 خوشحالم که کمک کردم. هر وقت سؤال داشتی همین‌جا هستم.'],
+[/خداحافظ|فعلا|شب بخیر/,'به امید دیدار! 🌙 امروز کار خوبی کردی که درس خواندی؛ موفق باشی.'],
+[/حالت چطور|خوبی؟|چطوری|چه خبر/,'من عالی‌ام، چون با تو حرف می‌زنم 😄 تو چطوری؟ امروز چه حالی داری؟'],
+[/تو کی|اسمت چیه|کی هستی|چی ?کار می ?کنی|چه کار/,'من NSH.bot هستم، دستیار ریاضی و فیزیک هشتم، ساختهٔ NSH.made 🤖 درس می‌دهم، مسئله حل می‌کنم، شکل می‌کشم و کنارت هستم وقتی درس‌خواندن سخت می‌شود.']];
+window.chat=function(z){let m=z.match(/اسمم\s+(\S+)|اسم من\s+(\S+)/);if(m){const n=(m[1]||m[2]).replace(/[^\u0600-\u06FFA-Za-z]/g,'');if(n){ls.set('nsh-name',n);return 'خوشبختم '+n+'! 🌟 از حالا اسمت را یادم می‌ماند. امروز چه چیزی یاد بگیریم؟'}}
+ if(/جوک/.test(z))return pick(JK)+CH([['😄 یکی دیگر','جوک ریاضی'],['✏️ تمرین','تمرین ساده']]);
+ if(/انگیزه/.test(z))return pick(MT)+CH([['✏️ شروع تمرین','تمرین ساده']]);
+ if(/تمرین ساده|یک تمرین|تمرین بده|سؤال بده|سوال بده/.test(z))return Math.random()<.5?newQ():newQ2();
+ for(const e of EM)if(e[0].test(z))return (ls.get('nsh-name')&&Math.random()<.5?ls.get('nsh-name')+'، ':'')+e[1];return null};
+let qs=0;window.QZ=null;
+function newQ(){const t=R(5);let q,a,h;
+ if(t===0){const x=2+R(9),y=3+R(8);q=x+'×'+y+' چند می‌شود؟';a=x*y;h='ضرب را به جمع‌های تکراری بشکن.'}
+ else if(t===1){const x=1+R(9),m=2+R(5),k=1+R(9);q='معادلهٔ '+m+'x + '+k+' = '+(m*x+k)+' ← x چند است؟';a=x;h='اول '+k+' را از دو طرف کم کن، بعد بر '+m+' تقسیم کن.'}
+ else if(t===2){const w=2+R(9),l=w+1+R(6);q='مساحت مستطیلی به طول '+l+' و عرض '+w+' چند است؟';a=l*w;h='مساحت = طول × عرض.'}
+ else if(t===3){const k=R(4),b=[3,5,6,8][k],c=[4,12,8,15][k],d=[5,13,10,17][k];q='در مثلث قائم‌الزاویه دو ضلع قائم '+b+' و '+c+' است. وتر چند است؟';a=d;h='فیثاغورس: c² = a² + b².'}
+ else{const t2=2+R(4),v=[5,10,12,20][R(4)];q='جسمی در '+t2+' ثانیه '+(v*t2)+' متر می‌رود. سرعتش چند m/s است؟';a=v;h='سرعت = مسافت ÷ زمان.'}
+ window.QZ={a,h,n:0};return '<b>✏️ تمرین:</b> '+fa(q)+'<div class="cap">جواب را فقط به‌صورت عدد بفرست. کمک خواستی بنویس «راهنمایی».</div>'}
+window.quizCheck=function(raw){const Q=window.QZ;if(!Q)return null;const z=dig(raw).trim();if(z==='راهنمایی')return '💡 '+Q.h;if(!/^-?\d+(\.\d+)?$/.test(z))return null;
+ if(+z===Q.a){window.QZ=null;qs++;return pick(['آفرین! 🎉','درست است، عالی! ⭐','دقیقاً همین! 👏'])+' ('+fa(qs)+' پاسخ درست)'+CH([['✏️ تمرین بعدی','تمرین ساده'],['⚡ فیزیک','فیزیک']])}
+ if(++Q.n>=2){window.QZ=null;return 'اشکالی ندارد 🌱 جواب درست <b>'+fa(Q.a)+'</b> بود. '+Q.h+' یکی دیگر امتحان کنیم؟'+CH([['✏️ تمرین دیگر','تمرین ساده']])}
+ return 'هنوز نه، ولی تسلیم نشو 💪 یک بار دیگر امتحان کن. <div class="cap">«راهنمایی» بنویس تا کمکت کنم.</div>'};
+/* geometry: sectioned toolbar */
+const T=document.querySelector('.geoTools');if(!T)return;const grp=[...T.querySelectorAll('.geoGroup')],basic=[...T.children].filter(c=>c.tagName==='BUTTON');
+const S=[['🖐 پایه','#5b6cff',basic]].concat(grp.map((g,i)=>[['📏 خط‌ها','🔷 شکل‌ها','📐 زاویه‌ها','🪞 تقارن'][i]||'ابزار',['#0ea5a4','#e0457b','#f59e0b','#8a5bff'][i],[...g.querySelectorAll('.geoSub > *')]]));
+const bar=document.createElement('div');bar.className='geoTabs';const bodies=S.map((x,i)=>{const d=document.createElement('div');d.className='geoSec'+(i?'':' on');x[2].forEach(n=>d.appendChild(n));const b=document.createElement('button');b.textContent=x[0];b.style.setProperty('--c',x[1]);if(!i)b.className='on';b.onclick=()=>{bar.querySelectorAll('button').forEach(k=>k.classList.remove('on'));b.classList.add('on');bodies.forEach(k=>k.classList.remove('on'));d.classList.add('on')};bar.appendChild(b);return d});
+grp.forEach(g=>g.remove());T.appendChild(bar);bodies.forEach(d=>T.appendChild(d));
+const sm=document.querySelector('#geoCmdBar summary');if(sm)sm.textContent='🧩 ساخت‌های دقیق (دستورها)'})();
+</script>
+<script>
+(function(){const R=n=>Math.floor(Math.random()*n),pick=a=>a[R(a.length)],r4=x=>+x.toFixed(4),pi=Math.PI;
+const B=(t,rows,tip)=>'<div class="tp"><b>'+t+'</b><div class="fx">'+rows.map(x=>row(x[0],NS(x[1]))).join('')+'</div>'+(tip?'<div class="cap">'+tip+'</div>':'')+'</div>';
+window.calc2=function(z){const n=(z.match(/-?\d+(?:\.\d+)?/g)||[]).map(Number);if(!n.length)return null;const[a,b,c,d]=n;
+ if(/میانگین|میانه|مد\b|دامنه|آمار/.test(z)&&n.length>=2){const v=[...n].sort((x,y)=>x-y),m=v.length,sum=v.reduce((x,y)=>x+y,0),md=m%2?v[(m-1)/2]:(v[m/2-1]+v[m/2])/2,f={};v.forEach(x=>f[x]=(f[x]||0)+1);const mx=Math.max(...Object.values(f)),mo=Object.keys(f).filter(k=>f[k]===mx);return B('آمار دادهٔ شما',[['مرتب‌شده',v.join('، ')],['میانگین',sum+' ÷ '+m+' = '+r4(sum/m)],['میانه',r4(md)],['مد',mx>1?mo.join('، '):'ندارد'],['دامنهٔ تغییرات',v[m-1]+' − '+v[0]+' = '+r4(v[m-1]-v[0])]],'میانگین = مجموع ÷ تعداد.')}
+ if(/درصد|٪|%/.test(z)&&b!==undefined)return B('درصد',[['فرمول','درصد × عدد ÷ 100'],['محاسبه',a+' × '+b+' ÷ 100'],['جواب',r4(a*b/100)]],a+'٪ از '+b);
+ if(/ضلعی/.test(z)&&a>=3&&Number.isInteger(a))return B('چندضلعی '+a+' ضلعی',[['مجموع زاویه‌های داخلی','('+a+'−2)×180 = '+(a-2)*180+'°'],['هر زاویهٔ منتظم',r4((a-2)*180/a)+'°'],['تعداد قطرها',a*(a-3)/2],['هر زاویهٔ خارجی منتظم',r4(360/a)+'°']]);
+ if(/فاصله/.test(z)&&d!==undefined)return B('فاصلهٔ دو نقطه',[['فرمول','√((x₂−x₁)²+(y₂−y₁)²)'],['محاسبه','√(('+c+'−'+a+')²+('+d+'−'+b+')²)'],['جواب',r4(Math.hypot(c-a,d-b))]]);
+ if(/وسط/.test(z)&&d!==undefined)return B('نقطهٔ وسط',[['فرمول','((x₁+x₂)/2 , (y₁+y₂)/2)'],['جواب','('+r4((a+c)/2)+' , '+r4((b+d)/2)+')']]);
+ if(/شیب/.test(z)&&d!==undefined)return c===a?B('شیب',[['نتیجه','خط قائم است؛ شیب تعریف نمی‌شود']]):B('شیب خط',[['فرمول','(y₂−y₁)/(x₂−x₁)'],['جواب',r4((d-b)/(c-a))]]);
+ if(/جانبی/.test(z)&&/استوانه/.test(z)&&b!==undefined)return B('مساحت جانبی استوانه',[['فرمول','2πrh'],['جواب',r4(2*pi*a*b)]]);
+ if(/حجم/.test(z)){if(/استوانه/.test(z)&&b!==undefined)return B('حجم استوانه',[['فرمول','πr²h'],['جای‌گذاری','π × '+a+'² × '+b],['جواب',r4(pi*a*a*b)]]);if(/مکعب/.test(z))return B('حجم مکعب',[['فرمول','a³'],['جواب',r4(a**3)]]);if(/هرم/.test(z)&&b!==undefined)return B('حجم هرم',[['فرمول','⅓ × قاعده × ارتفاع'],['جواب',r4(a*b/3)]]);if(/منشور|مکعب مستطیل/.test(z)&&b!==undefined)return B('حجم منشور',[['فرمول','مساحت قاعده × ارتفاع'],['جواب',r4(a*b)]],'مساحت قاعده و ارتفاع را بده.')}
+ if(/مساحت|محیط/.test(z)){const ar=/مساحت/.test(z);
+  if(/دایره/.test(z))return B(ar?'مساحت دایره':'محیط دایره',[['فرمول',ar?'πr²':'2πr'],['جواب',r4(ar?pi*a*a:2*pi*a)]]);
+  if(/مربع/.test(z))return B(ar?'مساحت مربع':'محیط مربع',[['فرمول',ar?'a²':'4a'],['جواب',ar?a*a:4*a]]);
+  if(/مستطیل/.test(z)&&b!==undefined)return B(ar?'مساحت مستطیل':'محیط مستطیل',[['فرمول',ar?'طول × عرض':'2(طول + عرض)'],['جواب',ar?a*b:2*(a+b)]]);
+  if(/مثلث/.test(z)&&ar&&b!==undefined)return B('مساحت مثلث',[['فرمول','قاعده × ارتفاع ÷ 2'],['جواب',r4(a*b/2)]]);
+  if(/ذوزنقه/.test(z)&&ar&&c!==undefined)return B('مساحت ذوزنقه',[['فرمول','(a + b) × h ÷ 2'],['جواب',r4((a+b)*c/2)]]);
+  if(/لوزی/.test(z)&&ar&&b!==undefined)return B('مساحت لوزی',[['فرمول','قطر۱ × قطر۲ ÷ 2'],['جواب',r4(a*b/2)]]);
+  if(/متوازی/.test(z)&&ar&&b!==undefined)return B('مساحت متوازی‌الاضلاع',[['فرمول','قاعده × ارتفاع'],['جواب',r4(a*b)]])}
+ return null};
+window.newQ2=function(){const t=R(6);let q,a,h;
+ if(t===0){const k=5+R(4);q='مجموع زاویه‌های داخلی یک '+k+'‌ضلعی چند درجه است؟';a=(k-2)*180;h='(n−2)×180.'}
+ else if(t===1){const p=pick([10,20,25,50]),bs=pick([40,80,120,200]);q=p+'٪ از '+bs+' چند است؟';a=p*bs/100;h='درصد × عدد ÷ ۱۰۰.'}
+ else if(t===2){const m=2+R(9),ac=2+R(6);q='جرم '+m+' کیلوگرم و شتاب '+ac+' m/s². نیرو چند نیوتن است؟';a=m*ac;h='F = m × a.'}
+ else if(t===3){const x=30+R(50),y=30+R(50);q='دو زاویهٔ یک مثلث '+x+'° و '+y+'° است. زاویهٔ سوم چند درجه است؟';a=180-x-y;h='مجموع زاویه‌های مثلث ۱۸۰ است.'}
+ else if(t===4){const k=2+R(5);q='حجم مکعبی به ضلع '+k+' چند است؟';a=k**3;h='حجم مکعب = a³.'}
+ else{const m=2+R(5),v=[];for(let i=0;i<m;i++)v.push(2+R(9));const x=v.reduce((p,c)=>p+c,0),extra=(m-x%m)%m;v[0]+=extra;q='میانگین داده‌های '+v.join('، ')+' چند است؟';a=v.reduce((p,c)=>p+c,0)/m;h='مجموع ÷ تعداد.'}
+ window.QZ={a,h,n:0};return '<b>✏️ تمرین:</b> '+fa(q)+'<div class="cap">جواب را فقط به‌صورت عدد بفرست. کمک خواستی بنویس «راهنمایی».</div>'}})();
+</script>
+<script>
+(function(){const pick=a=>a[Math.floor(Math.random()*a.length)],nz=t=>String(t).replace(/\u200c/g,' ').replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/[؟?!.,،:؛"«»()\[\]]/g,' ').replace(/\s+/g,' ').trim(),
+SW=new Set('است هست چیه چیست چی یعنی رو را و به از در که این آن یک من تو برای با هم بگو بگید میشه چه'.split(' ')),tk=t=>nz(t).split(' ').filter(w=>w&&!SW.has(w)),
+esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),
+KB={get(){try{return JSON.parse(ls.get('nsh-kb')||'[]')}catch(e){return[]}},set(a){ls.set('nsh-kb',JSON.stringify(a.slice(-200)))}},
+nm=()=>ls.get('nsh-name')||'',lastBot=()=>{const a=log.querySelectorAll('.m.bot');return a.length?a[a.length-1].textContent:''},
+box=(k,v)=>'<div class="tp"><b>'+esc(k)+'</b><div class="fx" style="display:block">'+esc(v)+'</div></div>',N=t=>t.replace(/\{n\}/g,nm()?nm():'').replace(/ ([!،])/g,'$1');
+function teach(t){let m=t.match(/^(?:یاد بگیر|یادبگیر|بدان|بدون|یادت باشه|یادت باشد)(?: که)?\s*[:：]?\s*(.+?)\s*(?:=|:|：|یعنی|برابر است با|برابر|همان|می‌شود|میشه)\s*(.+)$/);
+ if(!m)m=t.match(/^اگ(?:ر|ه)\s+(?:پرسیدم|گفتم|بپرسم|بگم)\s+(.+?)\s+(?:بگو|جواب بده)\s*(?:که)?\s*(.+)$/);
+ if(m){const k=m[1].trim(),v=m[2].trim();if(!tk(k).length)return null;const a=KB.get().filter(e=>nz(e.k)!==nz(k));a.push({k,v});KB.set(a);return pick(['باشه، یاد گرفتم! 🧠','ثبت شد! 📝','عالی، دیگر فراموش نمی‌کنم 💡'])+box(k,v)+'هر وقت دربارهٔ «'+esc(k)+'» بپرسی، همین را می‌گویم.'}
+ const n=t.match(/^(?:یادت باشه|یادت باشد|یادداشت کن|به خاطر بسپار)(?: که)?\s*[:：]?\s*(.{3,})$/);if(n){const a=KB.get();a.push({k:'یادداشت',v:n[1].trim(),note:1});KB.set(a);return 'یادداشت شد 📝 «'+esc(n[1].trim())+'». هر وقت بنویسی «چی یادته» نشانت می‌دهم.'}return null}
+function recall(r){if(/\d/.test(r))return null;const Q=tk(r);if(!Q.length)return null;let best=null,bs=0;for(const e of KB.get()){if(e.note)continue;const K=tk(e.k);if(K.length&&K.every(w=>Q.includes(w))&&Q.length<=K.length+4&&K.length>=bs){best=e;bs=K.length}}
+ return best?pick(['طبق چیزی که خودت یادم دادی 🧠','یادم هست! 😊','تو این را به من یاد دادی:'])+box(best.k,best.v):null}
+const RD=[['۳ نفر ۳ سیب را در ۳ دقیقه می‌خورند. ۹ نفر ۹ سیب را در چند دقیقه می‌خورند؟',3,'هر نفر در ۳ دقیقه یک سیب می‌خورد.'],['عددی را در ۳ ضرب کردم و ۴ تا جمع کردم، شد ۲۲. عدد چند بود؟',6,'معادلهٔ 3x+4=22 را حل کن.'],['اگر امروز شنبه (روز ۱) باشد، ۱۰ روز دیگر روز چندم هفته است؟',4,'۱۰ تقسیم بر ۷ باقی‌مانده ۳ دارد؛ ۱+۳.'],['مجموع عددهای ۱ تا ۱۰ چند است؟',55,'گاوس: ۵ جفت ۱۱ تایی.'],['یک ۱۰‌ضلعی چند قطر دارد؟',35,'n(n−3)/2.']];
+const TALK=[[/^(?:سلام|درود|های|hi|hello|سلام علیکم)(?: .*)?$/i,['سلام {n}! 😊 خوشحالم دوباره می‌بینمت. حالت چطوره؟','درود {n}! 🌟 امروز چه خبر؟ حال و هوایت چطور است؟','سلام {n}، خوش آمدی! ☀️ برای یاد گرفتن آماده‌ای یا اول کمی گپ بزنیم؟']],
+[/^(?:خوبم|خوب|عالیم|عالی ام|بد نیستم|بدک نیستم|مرسی خوبم|منم خوبم)$/,['خوشحالم! 😊 با این حال خوب بیا چیز جدیدی یاد بگیریم: هندسه، جبر یا فیزیک؟ یا یک تمرین سبک؟','عالیه! 🎉 پس انرژی داری. بگو چه چیزی را شروع کنیم؟']],
+[/حالم بد|^بدم|افتضاح|خیلی بد|حال ندارم/,['متأسفم که حالت خوب نیست 💙 اگر دوست داری بگو چه شده؛ من گوش می‌دهم. اگر نخواستی حرف بزنی، با یک تمرین خیلی آسان ذهنت را عوض کنیم؟']],
+[/دوستت دارم|عاشقتم/,['ممنون، خیلی لطف داری 😊 من از کمک‌کردن به تو لذت می‌برم؛ ولی یادت باشد دوست‌ها و خانواده‌ات هم کنارت باشند 💙']],
+[/باحالی|هوشمندی|خیلی خوبی|عالی بود|دمت گرم|آفرین/,['وای مرسی! 😄 تو هم عالی هستی. بیا ادامه بدهیم؟','لطف داری {n}! 🌟 من فقط کمک می‌کنم، تلاش اصلی با خودت است.']],
+[/احمق|بیشعور|الاغ|مزخرف|بدردنخور|به درد نخور/,['اگر جوابم ناراحتت کرد ببخشید 🙏 بگو کجا بد جواب دادم تا درستش کنم، یا به من یاد بده: «یاد بگیر: سؤال = جواب».']],
+[/حوصله.{0,3}(?:ام)? ?سر رفته|حوصلم سر|بی ?حوصله|کسل/,['بیا حوصله‌ات را سر بیاوریم! 😄 بنویس «معما»، «جوک ریاضی» یا «تمرین ساده».']],
+[/^(?:بازی|سرگرمم کن|بازی کنیم)/,['بازی؟ عالیه! 🎮 «چالش» (اول یا مرکب)، «معما» یا «تمرین ساده» — کدام را می‌خواهی؟']],
+[/کی ساختت|سازنده|کی درستت کرد|ساخته شدی/,['من را NSH.made ساخته؛ و هر روز با کمک تو هم باهوش‌تر می‌شوم، چون می‌توانی به من چیز یاد بدهی 🧠']],
+[/چند سالته|سنت|کجایی|اهل کجایی/,['من یک ربات هستم، سن و شهر ندارم 😄 ولی هر روز بزرگ‌تر و باهوش‌تر می‌شوم.']],
+[/^(?:ببخشید|معذرت|ببخشید که)/,['اصلاً مهم نیست 😊 بگو، چه کمکی می‌خواهی؟']],
+[/نمیدونم|نمی دونم|نمیدونم/,['اشکالی ندارد! 🌱 از ساده شروع کن: بگو مسئله چه چیزی را می‌خواهد و چه چیزهایی داده، با هم قدم‌به‌قدم جلو می‌رویم.']],
+[/^(?:فهمیدم|آها|اهان|متوجه شدم|فهمیدم ممنون)$/,['آفرین! 👏 بیا ببینم واقعاً جا افتاده؛ بنویس «تمرین ساده» تا امتحان کنیم.']],
+[/^(?:خب|خوب|باشه|اوکی|ok|حله)$/,['خب 😊 چه چیزی را شروع کنیم؟ «هندسه»، «جبر»، «فیزیک» یا «تمرین ساده»؟']]];
+window.mind=function(raw){const t=raw.trim(),z=nz(t);if(!z||/^[\d\s.,٫،۰-۹٠-٩+\-×÷*/^=()]+$/.test(t))return null;
+ const te=teach(t);if(te)return te;
+ let m=t.match(/^فراموش کن[:：]?\s*(.+)$/);if(m){const q=tk(m[1]);if(/^(?:همه|همه چیز|همه را)$/.test(nz(m[1])))return 'مطمئنی؟ اگر بله، بنویس «بله، همه را پاک کن».';const a=KB.get(),b=a.filter(e=>!(q.length&&tk(e.k).join(' ')===q.join(' ')));KB.set(b);return a.length===b.length?'چیزی با این نام در حافظه‌ام پیدا نکردم 🤔':'فراموش شد 🗑️'}
+ if(/بله.*همه را پاک کن/.test(z)){KB.set([]);return 'حافظه پاک شد 🧹 از اول یاد می‌گیریم.'}
+ if(/(?:چی|چه)(?:ا)? ?(?:یاد گرفتی|یادته|یاد داری)|یادداشت ?هام|یادگیری ?هام|حافظه ?ات/.test(z)){const a=KB.get();return a.length?'<b>🧠 حافظهٔ من ('+a.length+' مورد)</b>'+a.map((e,i)=>'<div class="cap">'+(i+1)+') '+(e.note?'📝 ':'')+esc(e.note?e.v:e.k+' ← '+e.v)+'</div>').join('')+'<div class="cap">برای پاک‌کردن: «فراموش کن: عنوان»</div>':'هنوز چیزی به من یاد نداده‌ای 🙂 بنویس: «یاد بگیر: مساحت دایره = πr²»'}
+ const rc=recall(t);if(rc)return rc;
+ if(/معما|پازل/.test(z)&&z.length<25){const q=pick(RD);window.QZ={a:q[1],h:q[2],n:0};return '<b>🧩 معما:</b> '+q[0]+'<div class="cap">جواب را فقط به‌صورت عدد بفرست؛ «راهنمایی» هم بنویسی کمک می‌کنم.</div>'}
+ if(z.length<40&&/^(?:آره|اره|بله|حتما|حتماً|بزن بریم|بریم|آماده ام|اماده ام)$/.test(z)){if(window.QZ)return 'اول جواب تمرین بالا را بفرست، یا «راهنمایی» بنویس 😊';const lb=lastBot();if(/تمرین|امتحان|چالش/.test(lb))return window.chat('تمرین ساده');if(/جوک/.test(lb))return window.chat('جوک');return 'عالی! 🎉 شروع کنیم؛ بنویس «هندسه»، «جبر»، «فیزیک» یا «تمرین ساده».'}
+ if(/^(?:نه|نخیر|نمیخوام|نمی خوام|بعدا|فعلا نه)$/.test(z))return pick(['باشه، هر وقت خواستی اینجا هستم 😊','حله! عجله‌ای نیست 🌿 هر وقت آماده شدی بگو.']);
+ if(window.LT&&z.length<32&&!/تمرین/.test(z)){if(/مثال/.test(z))return '📌 مثال دیگر دربارهٔ «'+window.LT[0]+'»:<div class="fx" style="display:block">'+window.LT[4]+'</div>اگر خواستی بنویس «تمرین ساده» تا امتحان کنیم.';if(/بیشتر|نفهمیدم|گنگ|دوباره|ساده ?تر|چرا|یعنی چی|یعنی چه/.test(z))return 'باشه، ساده‌تر و قدم‌به‌قدم می‌گویم 🙂<br>'+expl(window.LT)}
+ if(z.length<46)for(const e of TALK)if(e[0].test(z))return N(pick(e[1]));
+ return null};
+window.unknownReply=function(raw){const Q=tk(raw);let best=null,bs=0;for(const o of T){const hay=tk(o[0]+' '+o[1].replace(/\|/g,' ')+' '+o[3].replace(/[~:]+/g,' '));const sc=Q.filter(w=>w.length>2&&hay.some(h=>h===w||(h.length>3&&(h.includes(w)||w.includes(h))))).length;if(sc>bs){bs=sc;best=o}}
+ if(best&&bs>=1)return 'شاید منظورت این بود؟ 🤔'+card(best)+'<div class="cap">اگر نه، بیشتر توضیح بده تا بهتر بفهمم.</div>';
+ return pick(['هنوز این را متوجه نمی‌شوم 🤔 ولی دوست دارم یاد بگیرم! اگر جوابش را می‌دانی بنویس: «یاد بگیر: سؤال = جواب» تا همیشه یادم بماند. اگر مبحث درسی است، اسمش را بنویس؛ مثلاً «فیثاغورس».','این یکی را بلد نیستم 😅 ولی تو می‌توانی یادم بدهی: «یاد بگیر: … = …». یا بنویس «هندسه»، «جبر»، «فیزیک» تا از مبحث‌های آماده شروع کنیم.','کمی گیج شدم 🤯 می‌شود دقیق‌تر بگویی؟ مثلاً اسم مبحث یا یک مسئلهٔ عددی بنویس.'])}})();
+</script>
+</body>
+</html>
